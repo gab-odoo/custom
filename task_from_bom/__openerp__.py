@@ -13,5 +13,5 @@ This is to permit the creation of tasks from BOM-Products all linking to 1 SO-Li
     'depends': ['sale_service'],
     'data': [],
     'installable': True,
-    'auto_install': True
+    'auto_install': False,
 }
