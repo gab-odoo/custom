@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_delivery_carrier_portal,delivery.carrier,delivery.model_delivery_carrier,base.group_portal,1,0,0,0
+access_delivery_grid_portal,delivery.grid,delivery.model_delivery_grid,base.group_portal,1,0,0,0
+access_delivery_grid_line_portal,delivery.grid.line,delivery.model_delivery_grid_line,base.group_portal,1,0,0,0
+access_product_b2b_user,B2B User Read Product,product.model_product_product,website_b2b.group_user_portal,1,0,0,0
+access_picking_b2b_user,B2B User Read Picking,delivery.model_stock_picking,website_b2b.group_user_portal,1,0,0,0
+access_picking_type_b2b_user,B2B User Read Picking Type,stock.model_stock_picking_type,website_b2b.group_user_portal,1,0,0,0
+access_packing_operation_b2b_user,B2B Portal User Read Stock Packing Operation,stock.model_stock_pack_operation,website_b2b.group_user_portal,1,0,0,0
+access_invoice_b2b_user,B2B Portal User Read/Write Invoice,account.model_account_invoice,website_b2b.group_user_portal,1,1,0,0
+access_attachment_b2b_user,B2B Portal User Read/Write/Create Attachment,base.model_ir_attachment,website_b2b.group_user_portal,1,1,1,0
+access_invoice_line_b2b_user,B2B Portal User Read Invoice Line,account.model_account_invoice_line,website_b2b.group_user_portal,1,0,0,0
+access_invoice_tax_b2b_user,B2B Portal User Read Invoice Tax,account.model_account_invoice_tax,website_b2b.group_user_portal,1,0,0,0
+access_tax_b2b_user,B2B Portal User Read Tax,account.model_account_tax,website_b2b.group_user_portal,1,0,0,0
+access_warehouse_b2b_user,B2B Portal User Read Warehouse,mrp.model_stock_warehouse,website_b2b.group_user_portal,1,0,0,0
