@@ -257,23 +257,47 @@ elif form_data:
     journal_ids = journal_obj.search(cr, uid, [
         ('type', '=', 'sale')
     ])
-    invoices = self.action_invoice_create(cr, uid, [delivery_order_id], journal_ids[0])
+    #v7 invoices = self.action_invoice_create(cr, uid, [delivery_order_id], journal_ids[0])
+    #Create new invoice
+    picking=self.browse(cr,uid,delivery_order_id,context=context)
+    invoice = env['account.invoice'].create({
+        'name':picking.name,
+        'date_invoice':time.strftime('%Y-%m-%d'),
+        'partner_id':picking.partner_id.id,
+        'account_id':picking.partner_id.property_account_payable_id.id,
+    })
+
+    #Add the lines
+    for d_line in picking.move_lines:
+        i_line_value={
+        'product_id':d_line.product_id.id,
+        'name':d_line.product_id.description if d_line.product_id.description else d_line.product_id.name,
+        'invoice_id':invoice.id,
+        'quantity':d_line.product_uom_qty,
+        'price_unit':d_line.product_id.list_price,
+        'account_id':d_line.product_id.property_account_income_id.id if d_line.product_id.property_account_income_id else d_line.product_id.categ_id.property_account_income_categ_id.id,
+        'uom_id':d_line.product_uom.id,
+        }
+        invoice.invoice_line_ids.create(i_line_value)
+
+
+
     handling = config_obj.search(cr, uid, [('key', '=', 'B2B Handling Product ID')])
     handling_id = int(config_obj.browse(cr, uid, handling, context=context).value)
     handling_product = product_obj.browse(cr, uid, handling_id, context=context)
-    for invoice in invoices:
-        inv_id = invoice_obj.browse(cr, uid, invoice, context=None)
-        inv_id.write({'invoice_line': [
-                        (0, 0, {
-                            'product_id': handling_product.id,
-                            'name': handling_product.name,
-                            'quantity': 1.0,
-                            'price_unit': handling_product.lst_price,
-                            'invoice_line_tax_id': [(6,0,[t.id for t in handling_product.taxes_id])],
-                        })]
-            })
-        inv_id.button_reset_taxes()
-        workflow.trg_validate(uid, 'account.invoice', invoice, 'invoice_open', cr)
+    inv_id = invoice_obj.browse(cr, uid, invoice.id, context=None)
+    inv_id.write({'invoice_line': [
+                    (0, 0, {
+                        'product_id': handling_product.id,
+                        'name': handling_product.name,
+                        'quantity': 1.0,
+                        'price_unit': handling_product.lst_price,
+                        'invoice_line_tax_id': [(6,0,[t.id for t in handling_product.taxes_id])],
+                    })]
+        })
+    #inv_id.button_reset_taxes()
+    inv_id.invoice_validate()
+    #workflow.trg_validate(uid, 'account.invoice', invoice.id, 'invoice_open', cr)
 
 partner_location_ids = location_obj.search(cr, uid, [
     ('partner_id', '=', user.partner_id.id)
