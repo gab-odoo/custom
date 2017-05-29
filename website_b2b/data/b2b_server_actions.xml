@@ -162,7 +162,7 @@ elif form_data:
                 except:
                     encoded = 0
                     form_data[str(p.id)] = "0" # for displaying purposes only
-                if encoded < 0:
+                if encoded &lt; 0:
                     encoded = 0
 
                 difference = p.qty_available - encoded
@@ -455,7 +455,7 @@ else:
         ], context=context), context=context)
         overdues = dict()
         for inv in invoices:
-            overdues[inv.id] = inv.state == 'open' and datetime.datetime.strptime(inv.date_due, "%Y-%m-%d") < datetime.datetime.now()
+            overdues[inv.id] = inv.state == 'open' and datetime.datetime.strptime(inv.date_due, "%Y-%m-%d") &lt; datetime.datetime.now()
 
         partner_location_id = partner_location_ids[0]
         context.update({
