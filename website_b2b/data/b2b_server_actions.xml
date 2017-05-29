@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-<data>
+<data noupdate="0">
 
     <!-- Landing page -->
     <record id="welcome" model="ir.actions.server">
