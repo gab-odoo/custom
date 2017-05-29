@@ -9,7 +9,6 @@
         <field name="website_published" eval="True"/>
         <field name="model_id" ref="website.model_website"/>
         <field name="code">
-uid = 1
 user_obj = pool['res.users']
 is_user = user_obj.has_group(cr, uid, 'base.group_user') or user_obj.has_group(cr, uid, 'website_b2b.group_user_portal')
 if not is_user:
@@ -43,7 +42,6 @@ else:
         <field name="website_published" eval="True"/>
         <field name="model_id" ref="website.model_website"/>
         <field name="code">
-uid = 1
 product_obj = pool['product.product']
 location_obj = pool['stock.location']
 user_obj = pool['res.users']
@@ -92,7 +90,6 @@ else:
         <field name="website_published" eval="True"/>
         <field name="model_id" ref="stock.model_stock_picking"/>
         <field name="code">
-uid = 1
 form_data = request.params
 user_obj = pool['res.users']
 location_obj = pool['stock.location']
@@ -191,8 +188,8 @@ elif form_data:
                 'state': 'draft',
                 'partner_id': user.partner_id.id,
                 'move_lines': [(0, 0, l) for l in lines],
-                'invoice_state': '2binvoiced',
-                'message_follower_ids': [user.partner_id.id]
+                #'invoice_state': '2binvoiced',
+                #'message_follower_ids': [user.partner_id.id]
             }
 
             new_delivery_order_id = self.create(cr, uid, vals, context=context)
@@ -229,7 +226,6 @@ elif form_data:
         <field name="website_published" eval="True"/>
         <field name="model_id" ref="stock.model_stock_picking"/>
         <field name="code">
-uid = 1
 form_data = request.params
 user_obj = pool['res.users']
 location_obj = pool['stock.location']
@@ -316,7 +312,6 @@ else:
         <field name="website_published" eval="True"/>
         <field name="model_id" ref="stock.model_stock_picking"/>
         <field name="code">
-uid = 1
 form_data = request.params
 user_obj = pool['res.users']
 location_obj = pool['stock.location']
@@ -383,7 +378,9 @@ elif form_data:
                 'partner_id': user.partner_id.id,
                 'move_lines': [(0, 0, l) for l in lines],
                 'carrier_id': first_carrier_id,                             # id of carrier/delivery method
-                'message_follower_ids': [user.partner_id.id]
+                'location_id': location_id,
+                'location_dest_id': partner_location.id,
+                #'message_follower_ids': [user.partner_id.id]
             }
             new_delivery_order_id = self.create(cr, uid, vals_delivery_order, context=context)
             do = self.browse(cr, uid, new_delivery_order_id, context=context)
@@ -411,7 +408,6 @@ elif form_data:
         <field name="website_published" eval="True"/>
         <field name="model_id" ref="website.model_website"/>
         <field name="code">
-uid = 1
 user_obj = pool['res.users']
 is_user = user_obj.has_group(cr, uid, 'base.group_user') or user_obj.has_group(cr, uid, 'website_b2b.group_user_portal')
 if not is_user:
@@ -434,13 +430,11 @@ else:
             ('partner_id', '=', user.partner_id.id),
             ('picking_type_id.code', '=', 'outgoing'),
             ('state', 'not in', ['done', 'cancel']),
-            ('invoice_state', '=', 'none')
         ], context=context), context=context)
         completed_deliveries = picking_obj.browse(cr, uid, picking_obj.search(cr, uid, [
             ('partner_id', '=', user.partner_id.id),
             ('picking_type_id.code', '=', 'outgoing'),
             ('state', '=', 'done'),
-            ('invoice_state', '=', 'none')
         ], context=context), context=context)
         returns = picking_obj.browse(cr, uid, picking_obj.search(cr, uid, [
             ('partner_id', '=', user.partner_id.id),

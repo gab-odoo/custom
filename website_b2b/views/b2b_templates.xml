@@ -74,6 +74,7 @@
                             <t t-if="mode == 'sales'">You are not allowed to report report sales higher than your stock. Please make an inventory report.</t>
                             Please check lines highlighted in red.
                         </div>
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <center>
                             <a href="/website/action/website_b2b.welcome" class="btn btn-default">Back</a>
                             <input type="hidden" name="mode" t-att-value="mode" />
@@ -125,6 +126,7 @@
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&amp;times;</button>
                             <strong>Warning!</strong> Clicking on confirm will validate this invoice.
                         </div>
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <center>
                             <button type="submit" class="btn btn-danger">Confirm Invoice</button>
                         </center>
@@ -200,6 +202,7 @@
                                 </td>
                             </tr>
                         </table>
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <center>
                             <button type="submit" class="btn btn-danger">Confirm Delivery Order</button>
                         </center>
