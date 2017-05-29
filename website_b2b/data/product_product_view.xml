@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data>
-
+    <data noupdate="true">
         <record id="website_b2b_product_b2b_available" model="ir.ui.view">
             <field name="name">product.product.b2b.available.form</field>
             <field name="model">product.product</field>

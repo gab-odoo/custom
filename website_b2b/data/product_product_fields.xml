@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data noupdate="true">
-
+    <data>
         <record model="ir.model.fields" id="website_b2b.x_b2b_available">
             <field name="name">x_b2b_available</field>
             <field name="field_description">Available on B2B portal</field>
