@@ -344,11 +344,10 @@
                             <t t-foreach="invoices" t-as="inv" >
                                 <tr t-att-class="'danger' if overdues[inv.id] else ('info' if inv.state == 'open' else '')">
                                     <td t-esc="inv.date_invoice" />
-                                    <!-- <td><a t-att-href="'/web#model=account.invoice&amp;view_type=form&amp;id=%d' % inv.id" target="_blank"><t t-esc="inv.internal_number"/></a></td> -->
-                                    <td><a t-att-href="'/report/pdf/account.report_invoice/%d' % inv.id" target="_blank"><t t-esc="inv.internal_number"/></a></td>
+                                    <td><a t-att-href="'/report/pdf/account.report_invoice/%d' % inv.id" target="_blank"><t t-esc="inv.number"/></a></td>
                                     <td t-esc="inv.date_due" />
                                     <td class="text-right" t-esc="'%.2f' % inv.amount_total" />
-                                    <t t-set="lines_of_products" t-value="dict([(l.product_id.id, l.quantity) for l in inv.invoice_line if l.product_id])"/>
+                                    <t t-set="lines_of_products" t-value="dict([(l.product_id.id, l.quantity) for l in inv.invoice_line_ids if l.product_id])"/>
                                     <t t-foreach="stock" t-as="product"><td t-esc="'%d' % lines_of_products.get(product.id, 0)" class="text-center"/></t>
                                 </tr>
                            </t>

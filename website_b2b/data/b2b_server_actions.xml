@@ -257,7 +257,6 @@ elif form_data:
     journal_ids = journal_obj.search(cr, uid, [
         ('type', '=', 'sale')
     ])
-    #v7 invoices = self.action_invoice_create(cr, uid, [delivery_order_id], journal_ids[0])
     #Create new invoice
     picking=self.browse(cr,uid,delivery_order_id,context=context)
     invoice = env['account.invoice'].create({
@@ -286,18 +285,19 @@ elif form_data:
     handling_id = int(config_obj.browse(cr, uid, handling, context=context).value)
     handling_product = product_obj.browse(cr, uid, handling_id, context=context)
     inv_id = invoice_obj.browse(cr, uid, invoice.id, context=None)
-    inv_id.write({'invoice_line': [
+    inv_id.write({'invoice_line_ids': [
                     (0, 0, {
                         'product_id': handling_product.id,
                         'name': handling_product.name,
                         'quantity': 1.0,
                         'price_unit': handling_product.lst_price,
+                        'account_id':d_line.product_id.property_account_income_id.id if d_line.product_id.property_account_income_id else d_line.product_id.categ_id.property_account_income_categ_id.id,
                         'invoice_line_tax_id': [(6,0,[t.id for t in handling_product.taxes_id])],
                     })]
         })
     #inv_id.button_reset_taxes()
-    inv_id.invoice_validate()
-    #workflow.trg_validate(uid, 'account.invoice', invoice.id, 'invoice_open', cr)
+    #inv_id.invoice_validate()
+    workflow.trg_validate(uid, 'account.invoice', invoice.id, 'invoice_open', cr)
 
 partner_location_ids = location_obj.search(cr, uid, [
     ('partner_id', '=', user.partner_id.id)
@@ -473,7 +473,10 @@ else:
         ], context=context), context=context)
         overdues = dict()
         for inv in invoices:
-            overdues[inv.id] = inv.state == 'open' and datetime.datetime.strptime(inv.date_due, "%Y-%m-%d") &lt; datetime.datetime.now()
+            if inv.date_due:
+                overdues[inv.id] = inv.state == 'open' and datetime.datetime.strptime(inv.date_due, "%Y-%m-%d") &lt; datetime.datetime.now()
+            else:
+                overdues[inv.id] = False
 
         partner_location_id = partner_location_ids[0]
         context.update({
