@@ -149,7 +149,6 @@ elif form_data:
 
         # each inventory move must be associated with a delivery order
         if mode == "inventory":
-            location_id = int(config_obj.get_param(cr, uid, 'B2B Stock Location ID', context=None))
             domain = [('x_b2b_available', '=', True)]
             products = product_obj.browse(cr, uid, product_obj.search(cr, uid, domain, context=context), context=context)
             for p in products:
@@ -173,15 +172,9 @@ elif form_data:
                     })
 
         if lines:
-            if mode == 'inventory':
-                _, picking_type_id = imd.get_object_reference(cr, uid, 'gab_custom', 'pvs_picking_type')
-                location_id = location_id
-                location_dest_id = partner_location_id
-            if mode == 'sales':
-                _, picking_type_id = imd.get_object_reference(cr, uid, 'website_b2b', 'b2b_stock_picking_out')
-                location_id = partner_location_id
-                location_dest_id = customer_location_id
-
+            location_id = partner_location_id
+            location_dest_id = customer_location_id
+            _, picking_type_id = imd.get_object_reference(cr, uid, 'website_b2b', 'b2b_stock_picking_out')
             vals = {
                 'origin': 'B2B Portal',
                 'picking_type_id': picking_type_id,
