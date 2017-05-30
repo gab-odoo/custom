@@ -2,16 +2,18 @@
 <openerp>
 <data noupdate="1">
     <!-- configuration parameters for delivery products -->
+    <record id="b2b_stock" model="stock.warehouse">
+        <field name="name">B2B Stock</field>
+        <field name="code">B2B</field>
+    </record>
+
     <record id="b2b_stock_picking_out" model="stock.picking.type">
         <field name="name">B2B Retailer Customers</field>
         <field name="sequence_id" ref="stock.sequence_mrp_op"/>
         <field name="code">outgoing</field>
         <field name="warehouse_id" eval="ref('website_b2b.b2b_stock')"/>
     </record>
-    <record id="b2b_stock" model="stock.warehouse">
-        <field name="name">B2B Stock</field>
-        <field name="code">B2B</field>
-    </record>
+
 
     <record id="delivery_product_handling" model="product.product">
         <field name="name">B2B Handling</field>
