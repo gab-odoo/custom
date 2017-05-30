@@ -121,7 +121,7 @@ elif form_data:
         context.update({
             'location': partner_location_id
         })
-
+        location_id = partner_location_id
         # handling the reporting
 
         # each sale must be added to a delivery order
@@ -149,8 +149,7 @@ elif form_data:
 
         # each inventory move must be associated with a delivery order
         if mode == "inventory":
-            #location_id = int(config_obj.get_param(cr, uid, 'B2B Stock Location ID', context=None))
-            location_id = partner_location_id
+            location_id = int(config_obj.get_param(cr, uid, 'B2B Stock Location ID', context=None))
             domain = [('x_b2b_available', '=', True)]
             products = product_obj.browse(cr, uid, product_obj.search(cr, uid, domain, context=context), context=context)
             for p in products:
@@ -175,11 +174,13 @@ elif form_data:
 
         if lines:
             if mode == 'inventory':
-                #_, picking_type_id = imd.get_object_reference(cr, uid, 'stock', 'picking_type_out')
-                #picking_type_id = int(config_obj.get_param(cr, uid, 'B2B Picking Type ID', context=None))
-                _, picking_type_id = imd.get_object_reference(cr, uid, 'website_b2b', 'b2b_stock_picking_out')
+                _, picking_type_id = imd.get_object_reference(cr, uid, 'gab_custom', 'pvs_picking_type')
+                location_id = location_id
+                location_dest_id = partner_location_id
             if mode == 'sales':
                 _, picking_type_id = imd.get_object_reference(cr, uid, 'website_b2b', 'b2b_stock_picking_out')
+                location_id = partner_location_id
+                location_dest_id = customer_location_id
 
             vals = {
                 'origin': 'B2B Portal',
@@ -188,6 +189,8 @@ elif form_data:
                 'state': 'draft',
                 'partner_id': user.partner_id.id,
                 'move_lines': [(0, 0, l) for l in lines],
+                'location_id': location_id,
+                'location_dest_id': location_dest_id,
                 #'invoice_state': '2binvoiced',
                 #'message_follower_ids': [user.partner_id.id]
             }
@@ -242,8 +245,20 @@ if not is_user:
 
 elif form_data:
     delivery_order_id = int(form_data['stock.picking_id'])
-    self.force_assign(cr, uid, [delivery_order_id])
-    self.action_done(cr, uid, [delivery_order_id])
+    delivery_order = self.browse(cr, uid, delivery_order_id, context=context)
+    if delivery_order.state == 'draft':
+        delivery_order.action_confirm()
+        if delivery_order.state != 'assigned':
+            delivery_order.action_assign()
+            if delivery_order.state != 'assigned':
+                raise UserError(_("Could not reserve all requested products. Please use the \'Mark as Todo\' button to handle the reservation manually."))
+    for pack in delivery_order.pack_operation_ids:
+        if pack.product_qty > 0:
+            pack.write({'qty_done': pack.product_qty})
+        else:
+            pack.unlink()
+    delivery_order.do_transfer()
+
 
     # set DO and move lines as to be invoiced
     self.write(cr, uid, delivery_order_id, {
