@@ -250,8 +250,6 @@ elif form_data:
         delivery_order.action_confirm()
         if delivery_order.state != 'assigned':
             delivery_order.action_assign()
-            if delivery_order.state != 'assigned':
-                raise UserError(_("Could not reserve all requested products. Please use the \'Mark as Todo\' button to handle the reservation manually."))
     for pack in delivery_order.pack_operation_ids:
         if pack.product_qty > 0:
             pack.write({'qty_done': pack.product_qty})
@@ -310,8 +308,7 @@ elif form_data:
                         'invoice_line_tax_id': [(6,0,[t.id for t in handling_product.taxes_id])],
                     })]
         })
-    #inv_id.button_reset_taxes()
-    #inv_id.invoice_validate()
+
     workflow.trg_validate(uid, 'account.invoice', invoice.id, 'invoice_open', cr)
 
 partner_location_ids = location_obj.search(cr, uid, [
@@ -422,8 +419,17 @@ elif form_data:
                 #'message_follower_ids': [user.partner_id.id]
             }
             new_delivery_order_id = self.create(cr, uid, vals_delivery_order, context=context)
-            do = self.browse(cr, uid, new_delivery_order_id, context=context)
-            self.action_confirm(cr, uid, [new_delivery_order_id])
+            new_delivery_order = self.browse(cr, uid, new_delivery_order_id, context=context)
+            if new_delivery_order.state == 'draft':
+                new_delivery_order.action_confirm()
+                if new_delivery_order.state != 'assigned':
+                    new_delivery_order.action_assign()
+            for pack in new_delivery_order.pack_operation_ids:
+                if pack.product_qty > 0:
+                    pack.write({'qty_done': pack.product_qty})
+                else:
+                    pack.unlink()
+            new_delivery_order.do_transfer()
 
             response = request.website.render("website_b2b.final_do_page", {
                 "do": do,
