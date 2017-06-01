@@ -101,6 +101,7 @@
                     </ol>
                     <form t-if="do" action="/website/action/website_b2b.confirm_do_new_delivery" method="post" name="confirm_do_new_delivery">
                         <input type="hidden" name="stock.picking_id" t-att-value="do.id"/>
+                        <input type="hidden" name="all_pickings_ids" t-att-value="','.join(['%d' % p.id for p in all_pickings])"/>
                         <table class="table table-hover table-condensed">
                             <tr>
                                 <th>Product</th>
@@ -110,14 +111,26 @@
                                 <th class="text-right">Unit price</th>
                                 <th class="text-right">Total sum</th>
                             </tr>
-                            <tr t-as='line' t-foreach='do.move_lines'>
-                                <td><span t-esc='line.product_id.name'/></td>
-                                <td class="text-right" t-if="mode == 'inventory'"><span t-esc="'%d' % line.product_id.qty_available"/></td>
-                                <td class="text-right" t-if="mode == 'inventory'"><span t-esc="stock_reported_by_you.get(str(line.product_id.id))"/></td>
-                                <td class="text-right text-danger"><span t-esc='"%d" % line.product_qty'/></td>
-                                <td class="text-right"><span t-esc='"%.2f" % line.product_id.lst_price'/></td>
-                                <td class="text-right"><span t-esc='"%.2f" % (line.product_qty * line.product_id.lst_price)'/></td>
-                            </tr>
+                            <t t-as='picking' t-foreach='all_pickings'>
+                                <tr t-as='line' t-foreach='picking.move_lines'>
+                                    <td><span t-esc='line.product_id.name'/></td>
+                                    <td class="text-right" t-if="mode == 'inventory'"><span t-esc="'%d' % line.product_id.qty_available"/></td>
+                                    <td class="text-right" t-if="mode == 'inventory'"><span t-esc="stock_reported_by_you.get(str(line.product_id.id))"/></td>
+                                    <t t-if="line.location_id.id == location_id">
+                                        <td class="text-right text-danger"><span t-esc='"%d" % line.product_qty'/></td>
+                                    </t>
+                                    <t t-if="line.location_id.id != location_id">
+                                        <td class="text-right text-danger"><span t-esc='"%d" % -line.product_qty'/></td>
+                                    </t>
+                                    <td class="text-right"><span t-esc='"%.2f" % line.product_id.lst_price'/></td>
+                                    <t t-if="line.location_id.id == location_id">
+                                        <td class="text-right"><span t-esc='"%.2f" % (line.product_qty * line.product_id.lst_price)'/></td>
+                                    </t>
+                                    <t t-if="line.location_id.id != location_id">
+                                        <td class="text-right"><span t-esc='"%.2f" % (-line.product_qty * line.product_id.lst_price)'/></td>
+                                    </t>
+                                </tr>
+                            </t>
                             <tr>
                                 <td colspan="7 if mode='inventory' else 5" class="text-right"><strong>Total: <span t-esc="'%.2f' % total"/></strong></td>
                             </tr>

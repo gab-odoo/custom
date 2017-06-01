@@ -116,6 +116,7 @@ elif form_data:
         partner_location_id = partner_location_ids[0]
         mode = form_data.pop('mode')
         lines = list()
+        n_lines = list()
 
         # updating context gives us the good stock number for the location
         context.update({
@@ -147,6 +148,7 @@ elif form_data:
                             'product_uom_qty': qty
                         })
 
+
         # each inventory move must be associated with a delivery order
         if mode == "inventory":
             domain = [('x_b2b_available', '=', True)]
@@ -162,14 +164,28 @@ elif form_data:
 
                 difference = p.qty_available - encoded
                 if difference:
-                    lines.append({
-                        'name': p.name,
-                        'product_uom': p.uom_id.id,
-                        'product_id': int(p.id),
-                        'location_id': location_id,
-                        'location_dest_id': customer_location_id,              # partner location customers
-                        'product_uom_qty': difference,
-                    })
+                    if difference > 0:
+                        lines.append({
+                            'name': p.name,
+                            'product_uom': p.uom_id.id,
+                            'product_id': int(p.id),
+                            'location_id': location_id,
+                            'location_dest_id': customer_location_id,              # partner location customers
+                            'product_uom_qty': difference,
+                        })
+                    if difference &lt; 0:
+                        n_lines.append({
+                            'name': p.name,
+                            'product_uom': p.uom_id.id,
+                            'product_id': int(p.id),
+                            'location_id': customer_location_id,
+                            'location_dest_id': location_id,
+                            'product_uom_qty': -difference,
+                        })
+
+
+        do = self.browse(cr, uid, [], context=context)
+        all_pickings = self.browse(cr, uid, [], context=context)
 
         if lines:
             location_id = partner_location_id
@@ -190,14 +206,43 @@ elif form_data:
 
             new_delivery_order_id = self.create(cr, uid, vals, context=context)
             do = self.browse(cr, uid, new_delivery_order_id, context=context)
+            all_pickings = do
 
+        if n_lines:
+            location_id = partner_location_id
+            location_dest_id = customer_location_id
+            _, picking_type_id = imd.get_object_reference(cr, uid, 'website_b2b', 'b2b_stock_picking_out')
+            vals = {
+                'origin': 'B2B Portal Return',
+                'picking_type_id': picking_type_id,
+                'move_type': 'direct',
+                'state': 'draft',
+                'partner_id': user.partner_id.id,
+                'move_lines': [(0, 0, l) for l in n_lines],
+                'location_id': location_dest_id,
+                'location_dest_id': location_id,
+                #'invoice_state': '2binvoiced',
+                #'message_follower_ids': [user.partner_id.id]
+            }
+
+            return_delivery_order_id = self.browse(cr, uid, self.create(cr, uid, vals, context=context), context=context)
+
+            all_pickings = do + return_delivery_order_id
+
+        if lines or n_lines:
             # compute data for presentation
             total = 0.0
-            for line in do.move_lines:
-                total += line.product_qty * line.product_id.lst_price
+            for d in all_pickings:
+                for line in d.move_lines:
+                    if line.location_id.id == location_id:
+                        total += line.product_qty * line.product_id.lst_price
+                    else:
+                        total -= line.product_qty * line.product_id.lst_price
 
             response = request.website.render("website_b2b.invoice_page", {
                 'do': do,
+                'all_pickings': all_pickings,
+                'location_id':location_id,
                 'mode': mode,
                 'total': total,
                 'stock_reported_by_you': form_data
@@ -231,40 +276,42 @@ move_obj = pool['stock.move']
 config_obj = pool['ir.config_parameter']
 invoice_obj = pool['account.invoice']
 
-
+partner_location_ids = location_obj.search(cr, uid, [('partner_id', '=', user.partner_id.id)], context=context)
 is_user = user_obj.has_group(cr, uid, 'base.group_user') or user_obj.has_group(cr, uid, 'website_b2b.group_user_portal')
 if not is_user:
     response = request.website.render("website_b2b.401")
 
+
 elif form_data:
-    delivery_order_id = int(form_data['stock.picking_id'])
-    delivery_order = self.browse(cr, uid, delivery_order_id, context=context)
-    if delivery_order.state == 'draft':
-        delivery_order.action_confirm()
-        if delivery_order.state != 'assigned':
-            delivery_order.action_assign()
-    for pack in delivery_order.pack_operation_ids:
-        if pack.product_qty > 0:
-            pack.write({'qty_done': pack.product_qty})
-        else:
-            pack.unlink()
-    delivery_order.do_transfer()
+    all_picking_ids = [int(x) for x in (form_data.get('all_pickings_ids') or '').split(',')]
+    delivery_order_ids = self.browse(cr, uid, all_picking_ids, context=context)
+    for delivery_order in delivery_order_ids:
+        if delivery_order.state == 'draft':
+            delivery_order.action_confirm()
+            if delivery_order.state != 'assigned':
+                delivery_order.action_assign()
+        for pack in delivery_order.pack_operation_ids:
+            if pack.product_qty > 0:
+                pack.write({'qty_done': pack.product_qty})
+            else:
+                pack.unlink()
+        delivery_order.do_transfer()
 
 
     # set DO and move lines as to be invoiced
-    self.write(cr, uid, delivery_order_id, {
-        'invoice_state': '2binvoiced'
-    })
-    move_obj.write(cr, uid, [move.id for move in self.browse(cr, uid, delivery_order_id).move_lines], {
-        'invoice_state': '2binvoiced'
-    })
+    #self.write(cr, uid, delivery_order_id, {
+    #    'invoice_state': '2binvoiced'
+    #})
+    #move_obj.write(cr, uid, [move.id for move in self.browse(cr, uid, delivery_order_id).move_lines], {
+    #    'invoice_state': '2binvoiced'
+    #})
 
     # create and validate an invoice for the DO
     journal_ids = journal_obj.search(cr, uid, [
         ('type', '=', 'sale')
     ])
     #Create new invoice
-    picking=self.browse(cr,uid,delivery_order_id,context=context)
+    picking=delivery_order_ids[0]
     invoice = env['account.invoice'].create({
         'name':picking.name,
         'date_invoice':time.strftime('%Y-%m-%d'),
@@ -273,17 +320,23 @@ elif form_data:
     })
 
     #Add the lines
-    for d_line in picking.move_lines:
-        i_line_value={
-        'product_id':d_line.product_id.id,
-        'name':d_line.product_id.description if d_line.product_id.description else d_line.product_id.name,
-        'invoice_id':invoice.id,
-        'quantity':d_line.product_uom_qty,
-        'price_unit':d_line.product_id.list_price,
-        'account_id':d_line.product_id.property_account_income_id.id if d_line.product_id.property_account_income_id else d_line.product_id.categ_id.property_account_income_categ_id.id,
-        'uom_id':d_line.product_uom.id,
-        }
-        invoice.invoice_line_ids.create(i_line_value)
+    for pick in delivery_order_ids:
+        for d_line in pick.move_lines:
+            #raise Warning("%s, %s" %([d_line.location_id.id],partner_location_ids))
+            if [d_line.location_id.id] == partner_location_ids:
+                quantity = d_line.product_uom_qty
+            else:
+                quantity = -d_line.product_uom_qty
+            i_line_value={
+            'product_id':d_line.product_id.id,
+            'name':d_line.product_id.description if d_line.product_id.description else d_line.product_id.name,
+            'invoice_id':invoice.id,
+            'quantity':quantity,
+            'price_unit':d_line.product_id.list_price,
+            'account_id':d_line.product_id.property_account_income_id.id if d_line.product_id.property_account_income_id else d_line.product_id.categ_id.property_account_income_categ_id.id,
+            'uom_id':d_line.product_uom.id,
+            }
+            invoice.invoice_line_ids.create(i_line_value)
 
 
 
@@ -304,9 +357,6 @@ elif form_data:
 
     workflow.trg_validate(uid, 'account.invoice', invoice.id, 'invoice_open', cr)
 
-partner_location_ids = location_obj.search(cr, uid, [
-    ('partner_id', '=', user.partner_id.id)
-], context=context)
 
 if not partner_location_ids:
     response = request.website.render("website_b2b.debug", {
