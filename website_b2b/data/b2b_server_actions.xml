@@ -440,12 +440,11 @@ elif form_data:
         <field name="model_id" ref="website.model_website"/>
         <field name="code">
 imd = pool['ir.model.data']
+_ , picking_type_id = imd.get_object_reference(cr, uid, 'gab_custom', 'pvs_picking_type')
 user_obj = pool['res.users']
 is_user = user_obj.has_group(cr, uid, 'base.group_user') or user_obj.has_group(cr, uid, 'website_b2b.group_user_portal')
 if not is_user:
     response = request.website.render("website_b2b.401")
-
-_ , picking_type_id = imd.get_object_reference(cr, uid, 'gab_custom', 'pvs_picking_type')
 
 else:
     location_obj = pool['stock.location']
