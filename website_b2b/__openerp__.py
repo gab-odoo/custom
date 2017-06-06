@@ -33,7 +33,8 @@ B2B Platform based on website
         'website',
         'delivery',
         'portal_stock',
-        'base_import_module'
+        'base_import_module',
+        'delivery',
     ],
     'data': [
         'views/b2b_templates.xml',
