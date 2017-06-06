@@ -173,6 +173,7 @@
                         <li class="active">Delivery</li>
                     </ol>
                     <form action="/website/action/website_b2b.finish" method="post" name="new_delivery_page">
+                        <input type="hidden" name="inv" t-att-value="inv"/>
                         <table class="table table-hover table-condensed">
                             <tr>
                                 <th> </th>
