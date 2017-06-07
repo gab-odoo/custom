@@ -13,39 +13,12 @@
         <field name="code">outgoing</field>
         <field name="warehouse_id" eval="ref('website_b2b.b2b_stock')"/>
     </record>
-
-
-    <record id="delivery_product_handling" model="product.product">
-        <field name="name">B2B Handling</field>
-    </record>
-
-    <record id="delivery_product_delivery_note" model="product.product">
-        <field name="name">B2B Delivery Note</field>
-    </record>
-
-    <record id="delivery_product_picking" model="product.product">
-        <field name="name">B2B Picking</field>
-    </record>
-
-    <record id="website_b2b.delivery_product_handling_parameter" model="ir.config_parameter">
-        <field name="key">B2B Handling Product ID</field>
-        <field name="value" eval="ref('website_b2b.delivery_product_handling')"/>
-    </record>
-
-    <record id="website_b2b.delivery_product_deliverynote_parameter" model="ir.config_parameter">
-        <field name="key">B2B Delivery Note Product ID</field>
-        <field name="value" eval="ref('website_b2b.delivery_product_delivery_note')"/>
-    </record>
-
-    <record id="website_b2b.delivery_product_picking_parameter" model="ir.config_parameter">
-        <field name="key">B2B Picking Product ID</field>
-        <field name="value" eval="ref('website_b2b.delivery_product_picking')"/>
-    </record>
-
+ 
     <record id="website_b2b.picking_type" model="ir.config_parameter">
         <field name="key">B2B Picking Type ID</field>
         <field name="value" eval="ref('website_b2b.b2b_stock_picking_out')"/>
     </record>
+
     <record id="website_b2b.stock" model="ir.config_parameter">
         <field name="key">B2B Stock ID</field>
         <field name="value" eval="ref('__export__.stock_warehouse_4')"/>
