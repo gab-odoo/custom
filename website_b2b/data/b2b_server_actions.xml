@@ -44,6 +44,7 @@ else:
         <field name="code">
 product_obj = pool['product.product']
 location_obj = pool['stock.location']
+config_obj = pool['ir.config_parameter']
 user_obj = pool['res.users']
 is_user = user_obj.has_group(cr, uid, 'base.group_user') or user_obj.has_group(cr, uid, 'website_b2b.group_user_portal')
 if not is_user:
@@ -70,12 +71,19 @@ else:
         mode = request.params['mode'] if 'mode' in request.params else None
         domain = [
             ('x_b2b_available', '=', True),
-            ('qty_available', '>=', 0)
+            ('type','in',['consu','product']),
         ]
         products_ids = product_obj.search(cr, uid, domain, context=context)
         products = product_obj.browse(cr, uid, products_ids, context=context)
+        #need to get the available qty from the B2B stock
+        available_products = product_obj.browse(cr, uid, [], context=context)
+        for p in products:
+            #if p.with_context({'location' : int(config_obj.get_param(cr, uid, 'B2B Stock Location ID', context=None))}).qty_available > 0:
+            available_products += p
+
+
         response = request.website.render("website_b2b.sales_inventory_page", {
-            'products': products,
+            'products': available_products,
             'mode': mode
         })
         </field>
@@ -151,7 +159,9 @@ elif form_data:
 
         # each inventory move must be associated with a delivery order
         if mode == "inventory":
-            domain = [('x_b2b_available', '=', True)]
+            domain = [('x_b2b_available', '=', True),
+                      ('type','in',['consu','product']),
+            ]
             products = product_obj.browse(cr, uid, product_obj.search(cr, uid, domain, context=context), context=context)
             for p in products:
                 try:
@@ -346,7 +356,8 @@ else:
     })
 
     domain = [
-        ('x_b2b_available', '=', True)
+        ('x_b2b_available', '=', True),
+        ('type','in',['consu','product'])
     ]
     products = product_obj.browse(cr, uid, product_obj.search(cr, uid, domain, context=context), context=context)
     values = {
@@ -471,7 +482,7 @@ elif form_data:
                                         'invoice_line_tax_id': [(6,0,[t.id for t in carrier_id.product_id.taxes_id])],
                                     })]
                         })
-                workflow.trg_validate(uid, 'account.invoice', invoice.id, 'invoice_open', cr)
+                    workflow.trg_validate(uid, 'account.invoice', invoice.id, 'invoice_open', cr)
 
             response = request.website.render("website_b2b.final_do_page", {
                 "do": do,

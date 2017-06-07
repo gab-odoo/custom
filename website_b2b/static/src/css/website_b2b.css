@@ -1,0 +1,12 @@
+.text-danger{
+    color: #c0392b !important;
+}
+
+input.js_in,input.js_additionnal{
+    width: 40px;
+}
+
+tr.js_row > td {
+    display: table-cell;
+    vertical-align: middle !important;
+}

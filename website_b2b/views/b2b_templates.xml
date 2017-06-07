@@ -6,6 +6,9 @@
         <xpath expr="//t[@t-call-assets='web.assets_common']" position="attributes">
             <attribute name="t-js"></attribute>
         </xpath>
+        <xpath expr="//t[@t-call-assets='web.assets_common']" position="after">
+            <link rel="stylesheet" href="/website_b2b/static/src/css/website_b2b.css"/>
+        </xpath>
     </template>
 
     <!-- Landing page -->
