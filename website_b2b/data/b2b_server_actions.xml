@@ -77,9 +77,9 @@ else:
         products = product_obj.browse(cr, uid, products_ids, context=context)
         #need to get the available qty from the B2B stock
         available_products = product_obj.browse(cr, uid, [], context=context)
-        for p in products:
-            #if p.with_context({'location' : int(config_obj.get_param(cr, uid, 'B2B Stock Location ID', context=None))}).qty_available > 0:
-            available_products += p
+        for prod in products:
+            if prod.with_context({'location' : partner_location_id}).qty_available > 0:
+                available_products += prod
 
 
         response = request.website.render("website_b2b.sales_inventory_page", {
