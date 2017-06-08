@@ -16,15 +16,57 @@
         <t t-call="website.layout">
             <div class="wrap">
                 <div class="container">
-                    <div class="jumbotron mt32">
-                        <h1>B2B Portal</h1>
-                        <p>Welcome <t t-esc="user.name"/> (<t t-esc="user.login"/>)</p>
-                        <p>Your location: <t t-raw="location.complete_name if location else '&lt;em&gt;no location associated to this user&lt;/em&gt;'"/></p>
-                        <p t-if="location">
-                            <a href="/website/action/website_b2b.report?mode=sales" class="btn btn-primary">Report Sales</a>
-                            <a href="/website/action/website_b2b.report?mode=inventory" class="btn btn-primary">Report Inventory</a>
-                            <a href="/website/action/website_b2b.overview" class="btn btn-primary">Overview</a>
-                        </p>
+                    <div class="col-md-2 col-xs-0" style="background-image:">
+
+                    </div>
+                    <div class="col-md-10 col-xs-12">
+                        <div class="col-md-12">
+                            <h1>Ihre Kommission</h1>
+                            <p>Willkommen <t t-esc="user.name"/> (<t t-esc="user.login"/>)</p><br/>
+                            <p>Als Feuerwear-Kommissionshändler stellen wir Ihnen Ware unter Eigentumsvorbehalt zur Verfügung. Sie verkaufen die
+    Ware an Endkunden und rechnen dann die Verkäufe anschließend mit Feuerwear ab.
+    Für die Abrechnung können Sie wählen, ob Sie eine <a href="/website/action/website_b2b.report?mode=inventory">Lagerbestandsmeldung</a> machen möchten (wir errechnen die Verkäufe),
+    oder ob Sie direkt eine <a href="/website/action/website_b2b.report?mode=sales">Verkaufsmeldung</a> machen möchten. Auf beiden Wegen erhalten Sie eine Rechnung über verkaufte
+    Kommissionsware und eine Nachlieferung für Ihren Zielbestand.</p><br/>
+                            <p>Ihr Lager: <t t-raw="location.complete_name if location else '&lt;em&gt;no location associated to this user&lt;/em&gt;'"/></p><br/><br/>
+                        </div>
+                        <t t-if="location">
+                            <div class="col-md-12">
+                                <div class="col-md-3 col-xs-0">
+                                    <img src="/website_b2b/static/src/img/stack.png" style="max-width:130px"/>
+                                </div>
+                                <div class="col-md-9">
+                                    <a href="/website/action/website_b2b.report?mode=inventory" class="btn btn-primary">Meinen Lagerbestand melden</a>
+                                    <br/>
+                                    <p>Teilen Sie uns mit, wie Ihr Feuerwear-Sortiment aktuell bestückt ist. Sie erhalten eine Rechnung
+                                                            über verkaufte Kommissionsware und eine Nachlieferung für Ihren Zielbestand.</p>
+                                    <br/><br/>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-3 col-xs-0">
+                                    <img src="/website_b2b/static/src/img/sales.png" style="max-width:150px"/>
+                                </div>
+                                <div class="col-md-9">
+                                    <a href="/website/action/website_b2b.report?mode=sales" class="btn btn-primary">Meine Verkäufe melden</a>
+                                    <br/>
+                                    <p>Teilen Sie uns mit, wieviele Feuerwear-Produkte Sie verkauft haben. Sie erhalten eine Rechnung
+                                                            über verkaufte Kommissionsware und eine Nachlieferung für Ihren Zielbestand.</p>
+                                    <br/><br/>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-3 col-xs-0">
+                                    <img src="/website_b2b/static/src/img/overview.png" style="max-width:150px"/>
+                                </div>
+                                <div class="col-md-9">
+                                    <a href="/website/action/website_b2b.overview" class="btn btn-primary">Übersicht</a>
+                                    <p>Alles auf einen Blick: Lieferungen, Offene Sendungen, Retouren,
+                                                            Rechnungen und Lagerbestand</p>
+                                    <br/><br/>
+                                </div>
+                            </div>
+                        </t>
                     </div>
                 </div>
             </div>
@@ -39,8 +81,8 @@
             </t>
             <div class="wrap">
                 <div class="container">
-                    <h1 t-if="mode == 'inventory'">Inventory Report</h1>
-                    <h1 t-if="mode == 'sales'">Sales Report</h1>
+                    <h1 t-if="mode == 'inventory'">Lagerbestand melden</h1>
+                    <h1 t-if="mode == 'sales'">Verkäufe melden</h1>
                     <ol class="breadcrumb">
                         <li><a href="/website/action/website_b2b.welcome"><i class="fa fa-home"/></a></li>
                         <li t-if="mode == 'inventory'" class="active">Inventory Report</li>
@@ -439,6 +481,91 @@
             </div>
         </t>
     </template>
+
+<template id="footer_custom_fw" inherit_id="website.layout" name="FooterFW">
+    <xpath expr="//div[@id='footer']" position="replace">
+        <div class="oe_structure" id="footer">
+            <section>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-4">
+                                <h3 style="color:#d2232a">Sie benötigen Hilfe?</h3>
+                                <p>
+                                    Sie haben Fragen zum Kommissionsmodell
+                                    oder benötigen Hilfe bei der Bedienung
+                                    dieser Seite? Unser Innendienst hilft Ihnen
+                                    gerne weiter.
+                                </p>
+                            </div>
+                            <div class="col-md-4" style="padding: 30px">
+                                <table>
+                                    <tr>
+                                        <td>
+                                <img src="/website_b2b/static/src/img/isk.png" style="max-width:100px"/>
+                                        </td>
+                                        <td>
+                                            <p>Ildiko Schmitz-Kilian<br/>
+                                            Tel. 0221 46 89 23 14<br/>
+                                            eMail: ildiko@feuerwear.de</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-4" style="padding: 30px">
+                                <table>
+                                    <tr>
+                                        <td>
+                                <img src="/website_b2b/static/src/img/ap.png" style="max-width:100px"/>
+                                        </td>
+                                        <td>
+                                            <p>Anne Päffgen<br/>
+                                            Tel. 0221 46 89 23 18<br/>
+                                            eMail: anne@feuerwear.de<br/>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-12 footer-address">
+                            <div class="col-md-3">
+                                FEUERWEAR GmbH &amp; Co. KG<br/>
+								Wilhelm-Mauser-Str. 47<br/>
+								50827 Köln<br/>
+								Deutschland<br/><br/>
+                            </div>
+                            <div class="col-md-3">
+								Tel +49 (0)221 46 89 23 - 0<br/>
+								Fax +49 (0)221 46 89 23 - 41<br/>
+								Mail info@feuerwear.de<br/>
+								Web www.feuerwear.de<br/><br/>
+                            </div>
+                            <div class="col-md-2">
+								Handelsregister<br/>
+								Registergericht<br/>
+								Köln<br/>
+								HR A 26737<br/><br/>
+                            </div>
+                            <div class="col-md-2">
+								Komplementär<br/>
+								Feuerwear-Verwaltungs GmbH<br/>
+								Registergericht Köln<br/>
+								HR B 65071<br/><br/>
+                            </div>
+                            <div class="col-md-2">
+								Geschäftsführung<br/>
+								Martin Klüsener<br/>
+								Robert Klüsener<br/>
+								Sitz Köln<br/><br/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </xpath>
+</template>
 
 </data>
 </openerp>
