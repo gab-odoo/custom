@@ -8,26 +8,28 @@
         </xpath>
         <xpath expr="//t[@t-call-assets='web.assets_common']" position="after">
             <link rel="stylesheet" href="/website_b2b/static/src/css/website_b2b.css"/>
+            <link rel="icon" href="/website_b2b/static/src/img/favicon.ico" type="image/x-icon"/>
         </xpath>
     </template>
+
 
     <!-- Landing page -->
     <template id="welcome_page" name="B2B Home Page">
         <t t-call="website.layout">
             <div class="wrap">
                 <div class="container">
-                    <div class="col-md-2 col-xs-0" style="background-image:">
-
+                    <div class="col-md-2 col-xs-0">
+                        <img src="/website_b2b/static/src/img/sidebar.png" style="max-width:100%;margin-top:100px"/>
                     </div>
                     <div class="col-md-10 col-xs-12">
                         <div class="col-md-12">
                             <h1>Ihre Kommission</h1>
                             <p>Willkommen <t t-esc="user.name"/> (<t t-esc="user.login"/>)</p><br/>
                             <p>Als Feuerwear-Kommissionshändler stellen wir Ihnen Ware unter Eigentumsvorbehalt zur Verfügung. Sie verkaufen die
-    Ware an Endkunden und rechnen dann die Verkäufe anschließend mit Feuerwear ab.
-    Für die Abrechnung können Sie wählen, ob Sie eine <a href="/website/action/website_b2b.report?mode=inventory">Lagerbestandsmeldung</a> machen möchten (wir errechnen die Verkäufe),
-    oder ob Sie direkt eine <a href="/website/action/website_b2b.report?mode=sales">Verkaufsmeldung</a> machen möchten. Auf beiden Wegen erhalten Sie eine Rechnung über verkaufte
-    Kommissionsware und eine Nachlieferung für Ihren Zielbestand.</p><br/>
+                            Ware an Endkunden und rechnen dann die Verkäufe anschließend mit Feuerwear ab.
+                            Für die Abrechnung können Sie wählen, ob Sie eine <a href="/website/action/website_b2b.report?mode=inventory">Lagerbestandsmeldung</a> machen möchten (wir errechnen die Verkäufe),
+                            oder ob Sie direkt eine <a href="/website/action/website_b2b.report?mode=sales">Verkaufsmeldung</a> machen möchten. Auf beiden Wegen erhalten Sie eine Rechnung über verkaufte
+                            Kommissionsware und eine Nachlieferung für Ihren Zielbestand.</p><br/>
                             <p>Ihr Lager: <t t-raw="location.complete_name if location else '&lt;em&gt;no location associated to this user&lt;/em&gt;'"/></p><br/><br/>
                         </div>
                         <t t-if="location">
@@ -81,21 +83,57 @@
             </t>
             <div class="wrap">
                 <div class="container">
-                    <h1 t-if="mode == 'inventory'">Lagerbestand melden</h1>
-                    <h1 t-if="mode == 'sales'">Verkäufe melden</h1>
                     <ol class="breadcrumb">
                         <li><a href="/website/action/website_b2b.welcome"><i class="fa fa-home"/></a></li>
-                        <li t-if="mode == 'inventory'" class="active">Inventory Report</li>
-                        <li t-if="mode == 'sales'" class="active">Sales Report</li>
+                        <li t-if="mode == 'inventory'" class="active">Lagerbestand melden</li>
+                        <li t-if="mode == 'sales'" class="active">Verkäufe melden</li>
                     </ol>
+                    <t t-if="mode == 'inventory'">
+                        <h1>Lagerbestand melden</h1>
+                        <table>
+                            <tr>
+                                <td>
+                                    <img src="/website_b2b/static/src/img/stack.png" style="max-width:110px"/>
+                                </td>
+                                <td>
+                                    <p>
+                                        Die Lagerbestandsmeldung besteht aus zwei Schritten:<br/>
+                                        <span style="color:#d2232a">Schritt 1:</span> Tragen Sie ihren aktuellen Bestand in der markierten Spalte ein. Die Verkäufe werden automatisch errechnet und
+                                        Sie erhalten unsere Rechnung über die verkaufte Kommissionsware.<br/>
+                                        <span style="color:#808080">Schritt 2: Um ihre vereinbarten Zielbestände wieder aufzufüllen, errechnen wir automatisch, wieviel Ware Sie benötigen.
+                                            Wenn Sie mehr Ware als den Zielbestand benötigen, fügen Sie unten in der Liste Ihre Wunschartikel hinzu.</span>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </t>
+                    <t t-if="mode == 'sales'">
+                        <h1>Verkäufe melden</h1>
+                        <table>
+                            <tr>
+                                <td>
+                                    <img src="/website_b2b/static/src/img/sales.png" style="max-width:130px"/>
+                                </td>
+                                <td style="margin-left:20px">
+                                    <p>
+                                        Die Verkaufsmeldung besteht aus zwei Schritten:<br/>
+                                        <span style="color:#d2232a">Schritt 1:</span> Tragen Sie ihre aktuellen Verkäufe in der markierten Spalte ein. Unsere Rechnung über die verkaufte Kommissionsware
+                                        wird automatisch erstellt.<br/>
+                                        <span style="color:#808080">Schritt 2: Um ihre vereinbarten Zielbestände wieder aufzufüllen, errechnen wir automatisch, wieviel Ware Sie benötigen.
+                                            Wenn Sie mehr Ware als den Zielbestand benötigen, fügen Sie unten in der Liste Ihre Wunschartikel hinzu.</span>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </t>
                     <form method="post" t-att-name="mode" action="/website/action/website_b2b.invoice">
                         <table class="table table-hover table-condensed">
                             <tr>
                                 <th> </th>
-                                <th>Product</th>
-                                <th>Stock on</th>
-                                <th t-if="mode == 'inventory'">Current stock</th>
-                                <th t-if="mode == 'sales'">Sold</th>
+                                <th>Artikel</th>
+                                <th>Zuletzt gemeldeter Bestand</th>
+                                <th t-if="mode == 'inventory'">Aktueller Bestand</th>
+                                <th t-if="mode == 'sales'">Mein Verkäufe an Endkunden</th>
                             </tr>
                             <t t-as='p' t-foreach='products'>
                                 <tr class="js_row">
@@ -112,21 +150,22 @@
                         </table>
                         <div class="alert alert-warning alert-dismissable">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&amp;times;</button>
-                            <strong>Warning!</strong> Before clicking on "Confirm", double-check that the requested quantities are correct. <strong>This will create an invoice.</strong>
+                            <strong>Achtung!</strong> Bevor Sie fortfahren, vergewissern Sie sich, dass die Mengen korrekt sind.<strong>Dies wird eine Rechnung erstellen.</strong>
                         </div>
                         <div class="alert alert-danger hidden js_overflow_alert">
-                            <t t-if="mode == 'inventory'">You should not report an inventory higher than the previous one. Are you sure?</t>
-                            <t t-if="mode == 'sales'">You are not allowed to report report sales higher than your stock. Please make an inventory report.</t>
-                            Please check lines highlighted in red.
+                            <t t-if="mode == 'inventory'">Sie sollten keinen höheren Lagerbestand als die letzte Lagermeldung eintragen. Sind Sie sicher?</t>
+                            <t t-if="mode == 'sales'">Sie können keine Verkaufsmeldung erstellen, die über ihr Lagerbestand hinausgeht. Bitte erstellen Sie eine Lagerbestandsmeldung.</t>
+                            Bitte überprüfen Sie die rot hinterlegten Zeilen.
                         </div>
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <center>
-                            <a href="/website/action/website_b2b.welcome" class="btn btn-default">Back</a>
+                            <a href="/website/action/website_b2b.welcome" class="btn btn-default">Zurück</a>
                             <input type="hidden" name="mode" t-att-value="mode" />
-                            <button t-if="mode == 'inventory'" type="submit" class="btn btn-primary">Create Invoice</button>
-                            <button t-if="mode == 'sales'" type="submit" class="btn btn-primary js_sbutton">Create Invoice</button>
+                            <button t-if="mode == 'inventory'" type="submit" class="btn btn-primary">Bestandsmeldung bestätigen &amp; weiter</button>
+                            <button t-if="mode == 'sales'" type="submit" class="btn btn-primary js_sbutton">Verkaufsmeldung bestätigen &amp; weiter</button>
                         </center>
                     </form>
+                    <br/><br/>
                 </div>
             </div>
         </t>
@@ -140,21 +179,21 @@
                     <h1>Invoice</h1>
                     <ol class="breadcrumb">
                         <li><a href="/website/action/website_b2b.welcome"><i class="fa fa-home"/></a></li>
-                        <li t-if="mode == 'inventory'">Inventory Report</li>
-                        <li t-if="mode == 'sales'">Sales Report</li>
-                        <li class="active">Invoice</li>
+                        <li t-if="mode == 'inventory'">Lagerbestand melden</li>
+                        <li t-if="mode == 'sales'">Verkäufe melden</li>
+                        <li class="active">Rechnung</li>
                     </ol>
                     <form t-if="do" action="/website/action/website_b2b.confirm_do_new_delivery" method="post" name="confirm_do_new_delivery">
                         <input type="hidden" name="stock.picking_id" t-att-value="do.id"/>
                         <input type="hidden" name="all_pickings_ids" t-att-value="','.join(['%d' % p.id for p in all_pickings])"/>
                         <table class="table table-hover table-condensed">
                             <tr>
-                                <th>Product</th>
-                                <th t-if="mode == 'inventory'" class="text-right">Stock on</th>
-                                <th t-if="mode == 'inventory'" class="text-right">Stock reported by you</th>
-                                <th class="text-right">Invoice</th>
-                                <th class="text-right">Unit price</th>
-                                <th class="text-right">Total sum</th>
+                                <th>Artikel</th>
+                                <th t-if="mode == 'inventory'" class="text-right">Zuletzt gemeldeter Bestand</th>
+                                <th t-if="mode == 'inventory'" class="text-right">Aktuell gemeldeter Bestand</th>
+                                <th class="text-right">Verkäufe an Endkunden</th>
+                                <th class="text-right">Einzelpreis</th>
+                                <th class="text-right">Gesamtpreis</th>
                             </tr>
                             <t t-as='picking' t-foreach='all_pickings'>
                                 <tr t-as='line' t-foreach='picking.move_lines'>
@@ -177,26 +216,27 @@
                                 </tr>
                             </t>
                             <tr>
-                                <td colspan="7 if mode='inventory' else 5" class="text-right"><strong>Total: <span t-esc="'%.2f' % total"/></strong></td>
+                                <td colspan="7 if mode='inventory' else 5" class="text-right"><strong>Summe: <span t-esc="'%.2f' % total"/></strong></td>
                             </tr>
                         </table>
                         <div class="alert alert-warning alert-dismissable">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&amp;times;</button>
-                            <strong>Warning!</strong> Clicking on confirm will validate this invoice.
+                            <strong>Achtung!</strong> Wenn Sie fortfahren, wird diese Rechnung bestätigt.
                         </div>
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <center>
-                            <button type="submit" class="btn btn-danger">Confirm Invoice</button>
+                            <button type="submit" class="btn btn-danger">Rechnung bestätigen &amp; weiter</button>
                         </center>
                     </form>
                     <div t-if="not do">
-                        <p class="well">There is nothing to invoice. Either your stock remains unchanged or you did not sell anything since the last reporting.</p>
+                        <p class="well">Es gibt nichts zu berechnen. Entweder Ihr Lager hat sich nicht verändert, oder Sie haben seit der letzten Meldung keine Verkäufe getätigt.</p>
                         <center>
-                            <a class="btn btn-default" t-att-href="'/website/action/website_b2b.report?mode=%s' % mode">Back</a>
-                            <a class="btn btn-primary" href="/website/action/website_b2b.confirm_do_new_delivery">This is correct</a>
+                            <a class="btn btn-default" t-att-href="'/website/action/website_b2b.report?mode=%s' % mode">Zurück</a>
+                            <a class="btn btn-primary" href="/website/action/website_b2b.confirm_do_new_delivery">Das ist Korrekt</a>
                         </center>
                     </div>
                     <div class="oe_structure"/>
+                    <br/><br/>
                 </div>
             </div>
         </t>
@@ -213,22 +253,39 @@
                     <h1>Delivery</h1>
                     <ol class="breadcrumb">
                         <li><a href="/website/action/website_b2b.welcome"><i class="fa fa-home"/></a></li>
-                        <li>Report</li>
-                        <li>Invoice</li>
-                        <li class="active">Delivery</li>
+                        <li>Meldung</li>
+                        <li>Rechnung</li>
+                        <li class="active">Nachlieferung</li>
                     </ol>
+                    <h1>Nachlieferung bestätigen</h1>
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="/website_b2b/static/src/img/stack.png" style="max-width:110px"/>
+                            </td>
+                            <td>
+                                <p>
+                                    Die Lagerbestandsmeldung besteht aus zwei Schritten:<br/>
+                                    <span style="color:#808080">Schritt 1: Tragen Sie ihren aktuellen Bestand in der markierten Spalte ein. Die Verkäufe werden automatisch errechnet und
+                                    Sie erhalten unsere Rechnung über die verkaufte Kommissionsware.</span><br/>
+                                    <span style="color:#d2232a">Schritt 2:</span> Um ihre vereinbarten Zielbestände wieder aufzufüllen, errechnen wir automatisch, wieviel Ware Sie benötigen.
+                                        Wenn Sie mehr Ware als den Zielbestand benötigen, fügen Sie unten in der Liste Ihre Wunschartikel hinzu.
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
                     <form action="/website/action/website_b2b.finish" method="post" name="new_delivery_page">
                         <input type="hidden" name="inv" t-att-value="inv"/>
                         <table class="table table-hover table-condensed">
                             <tr>
                                 <th> </th>
-                                <th>Product</th>
-                                <th class="text-right">Current stock</th>
-                                <th class="text-right">Forecasted stock</th>
-                                <th class="text-right">Target stock</th>
-                                <th class="text-right">Delivery</th>
-                                <th class="text-right">Additional delivery</th>
-                                <th class="text-right">Total</th>
+                                <th>Artikel</th>
+                                <th class="text-right">Aktueller Bestand</th>
+                                <th class="text-right">Erwarteter Bestand</th>
+                                <th class="text-right">Zielbestand</th>
+                                <th class="text-right">Nachlieferung</th>
+                                <th class="text-right">Zusätzlich gewünschte Nachlieferung</th>
+                                <th class="text-right">Nachlieferung gesamt</th>
                             </tr>
                             <tr t-as='product' t-foreach='products' class="js_row">
                                 <td>
@@ -263,10 +320,11 @@
                         </table>
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <center>
-                            <button type="submit" class="btn btn-danger">Confirm Delivery Order</button>
+                            <button type="submit" class="btn btn-danger">Nachlieferung bestätigen</button>
                         </center>
                     </form>
                     <div class="oe_structure"/>
+                    <br/><br/>
                 </div>
             </div>
         </t>
@@ -277,19 +335,32 @@
             <div class="wrap">
                 <div class="container">
                     <div class="oe_structure"/>
-                    <h1>Delivery Order</h1>
                     <ol class="breadcrumb">
                         <li><a href="/website/action/website_b2b.welcome"><i class="fa fa-home"/></a></li>
-                        <li>Report</li>
-                        <li>Invoice</li>
-                        <li>Delivery</li>
-                        <li class="active">Delivery Order</li>
+                        <li>Meldung</li>
+                        <li>Rechnung</li>
+                        <li>Nachlieferung</li>
+                        <li class="active">Bestätigung</li>
                     </ol>
+                    <h1>Bestellung abgeschlossen</h1>
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="/website_b2b/static/src/img/stack.png" style="max-width:110px"/>
+                            </td>
+                            <td>
+                                <p>
+                                    Vielen Dank für Ihre Bestellung. Die Nachlieferung geht Ihnen in den nächsten 3 Werktagen zu. Sie erhalten eine Sendungsverfolgungsnummer
+                                    an Ihre eMailadresse <t t-esc="user.login"/>.
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
                     <div t-if="do">
                         <table t-if="do" class="table table-hover table-condensed">
                             <tr>
-                                <th>Product</th>
-                                <th class="text-right">Qty</th>
+                                <th>Artikel</th>
+                                <th class="text-right">Menge</th>
                             </tr>
                             <tr t-as='line' t-foreach='do.move_lines'>
                                 <td><span t-esc='line.product_id.name'/></td>
@@ -298,20 +369,21 @@
                         </table>
                     </div>
                     <div t-if="not do">
-                        <p class="alert alert-warning">You did not order anything this time.</p>
+                        <p class="alert alert-warning">Sie haben nichts nachbestellt.</p>
                     </div>
                     <center t-if='do'>
                         <div class="alert alert-success"><p> <t t-esc="do.name"/> - <t t-esc="do.date"/></p>
-                        <p>This order has been recorded in the system.</p>
+                        <p>Diese Nachbestellung wurde in unser System gespeichert</p>
                         <!--<p>Note: Shipping costs have been recorded under invoice  <t t-esc="inv.number"/></p>--></div>
                     </center>
                     <div class="well">
                         <center>
-                        <p><strong>Your reporting is now completed!</strong></p>
-                        <a class="btn btn-primary" href="/website/action/website_b2b.welcome"><i class="fa fa-home"/> Go to homepage</a>
+                        <p><strong>Ihre Meldung ist nun abgeschlossen!</strong></p>
+                        <a class="btn btn-primary" href="/website/action/website_b2b.welcome"><i class="fa fa-home"/> Zurück zur Homepage</a>
                         </center>
                     </div>
                     <div class="oe_structure"/>
+                    <br/><br/>
                 </div>
             </div>
         </t>
@@ -322,20 +394,54 @@
         <t t-call="website.layout">
             <div class="wrap">
                 <div class="container" style="width: 100%;">
-                    <h1>Overview</h1>
                     <ol class="breadcrumb">
                         <li><a href="/website/action/website_b2b.welcome"><i class="fa fa-home"/></a></li>
-                        <li class="active">Overview</li>
+                        <li class="active">Übersicht</li>
                     </ol>
+                    <h1>Übersicht</h1>
+                    <table>
+                        <tr>
+                            <td rowspan="7">
+                                <img src="/website_b2b/static/src/img/overview.png" style="max-width:190px"/>
+                            </td>
+                            <td colspan="3">
+                                <p>In der Übersicht fassen wir alle Informationen zur Feuerwear-Kommissionsware für Sie zusammen.</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td/>
+                            <td>Offene Lieferungen</td><td>– Diese Nachlieferung ist unterwegs. Sie finden die Sendungsnr. in der Zusammenfassung.</td>
+                        </tr>
+                        <tr>
+                            <td/>
+                            <td>Abgeschlossene Lieferungen </td><td> – Eine Übersicht aller abgeschlossenen Lieferungen.</td>
+                        </tr>
+                        <tr>
+                            <td/>
+                            <td>Retouren</td><td>– Wenn Sie Ware an uns zurückgeben mussten, wird der Fall hier gelistet</td>
+                        </tr>
+                        <tr>
+                            <td/>
+                            <td>Rechnungen</td><td>– Hier finden Sie alle Rechnungen über verkaufte Kommissionsware.</td>
+                        </tr>
+                        <tr>
+                            <td/>
+                            <td>Lagerbestand</td><td>– Der Lagerbestand gemäß Ihrer letzten Meldung. Hier aktualisieren Sie Ihren Lagerbestand</td>
+                        </tr>
+                        <tr>
+                            <td/>
+                            <td>Zielbestand</td><td>– Hier können Sie dauerhaft Ihren Zielbestand anpassen.</td>
+                        </tr>
+                    </table>
                     <!-- Open Deliveries -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h2 class="panel-title"><a name="open" href="#open">Open Deliveries</a></h2>
+                            <h2 class="panel-title"><a name="open" href="#open">Offene Lieferungen</a></h2>
                         </div>
                         <table class="table table-hover table-condensed">
                             <tr>
-                                <th>Date</th>
-                                <th>Document Number</th>
+                                <th>Datum</th>
+                                <th>Referenz</th>
                                 <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center"/></t>
                             </tr>
                             <tr t-foreach="open_deliveries" t-as="deliv">
@@ -350,12 +456,12 @@
                     <!-- Completed Deliveries -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h2 class="panel-title"><a name="completed" href="#completed">Completed Deliveries</a></h2>
+                            <h2 class="panel-title"><a name="completed" href="#completed">Abgeschlossene Lieferungen</a></h2>
                         </div>
                         <table class="table table-hover table-condensed">
                             <tr>
-                                <th>Date</th>
-                                <th>Document Number</th>
+                                <th>Datum</th>
+                                <th>Referenz</th>
                                 <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center"/></t>
                             </tr>
                             <tr t-foreach="completed_deliveries" t-as="deliv">
@@ -370,12 +476,12 @@
                     <!-- Returns -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h2 class="panel-title"><a name="returns" href="#returns">Returns</a></h2>
+                            <h2 class="panel-title"><a name="returns" href="#returns">Retouren</a></h2>
                         </div>
                         <table class="table table-hover table-condensed">
                             <tr>
-                                <th>Date</th>
-                                <th>Document Number</th>
+                                <th>Datum</th>
+                                <th>Referenz</th>
                                 <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center"/></t>
                             </tr>
                             <tr t-foreach="returns" t-as="deliv">
@@ -390,14 +496,15 @@
                     <!-- Invoices -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h2 class="panel-title"><a name="invoices" href="#invoices">Invoices</a></h2>
+                            <h2 class="panel-title"><a name="invoices" href="#invoices">Rechnungen</a></h2>
                         </div>
                         <table class="table table-hover table-condensed">
                             <tr>
-                                <th>Date</th>
-                                <th>Document Number</th>
-                                <th>Due Date</th>
-                                <th class="text-right">Total Amount</th>
+                                <th>Datum</th>
+                                <th>Referenz</th>
+                                <th>Zahlungsziel</th>
+                                <th class="text-right">Gesamtbetrag</th>
+                                <th class="text-right">Status</th>
                                 <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center"/></t>
                             </tr>
                             <t t-foreach="invoices" t-as="inv" >
@@ -406,6 +513,7 @@
                                     <td><a t-att-href="'/report/pdf/account.report_invoice/%d' % inv.id" target="_blank"><t t-esc="inv.number"/></a></td>
                                     <td t-esc="inv.date_due" />
                                     <td class="text-right" t-esc="'%.2f' % inv.amount_total" />
+                                    <td class="text-right" t-esc="inv.state" />
                                     <t t-set="lines_of_products" t-value="dict([(l.product_id.id, l.quantity) for l in inv.invoice_line_ids if l.product_id])"/>
                                     <t t-foreach="stock" t-as="product"><td t-esc="'%d' % lines_of_products.get(product.id, 0)" class="text-center"/></t>
                                 </tr>
@@ -415,7 +523,7 @@
                     <!-- Stock -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h3 class="panel-title"><a name="stock" href="#stock">Stock</a></h3>
+                            <h3 class="panel-title"><a name="stock" href="#stock">Lagerbestand</a></h3>
                         </div>
                         <table class="table table-hover table-condensed">
                             <tr>
@@ -425,13 +533,13 @@
                                 </t>
                             </tr>
                             <tr>
-                                <th>Quantity</th>
+                                <th>Aktueller Lagerbestand</th>
                                 <t t-foreach="stock" t-as="product">
                                     <td t-esc="'%d' % product.qty_available" class="text-center"/>
                                 </t>
                             </tr>
                             <tr>
-                                <th>Target</th>
+                                <th>Zielbestand</th>
                                 <t t-foreach="stock" t-as="product">
                                     <t t-set="orderpoints" t-value="[op.product_min_qty for op in product.orderpoint_ids if op.location_id.id == location_id]"/>
                                     <td t-esc="('%d' % orderpoints[0]) if orderpoints else 'n/a'" class="text-center"/>
@@ -440,8 +548,9 @@
                         </table>
                     </div>
                     <center>
-                        <a href="/website/action/website_b2b.welcome" class="btn btn-primary hidden-print">Back</a>
+                        <a href="/website/action/website_b2b.welcome" class="btn btn-primary hidden-print">Zurück</a>
                     </center>
+                    <br/><br/>
                 </div>
             </div>
         </t>
