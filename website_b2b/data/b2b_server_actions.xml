@@ -486,7 +486,8 @@ elif form_data:
 
             response = request.website.render("website_b2b.final_do_page", {
                 "do": do,
-                "inv": None
+                "inv": None,
+                'user': user,
             })
 
         else:
@@ -494,7 +495,8 @@ elif form_data:
                 workflow.trg_validate(uid, 'account.invoice', int(inv), 'invoice_open', cr)
             response = request.website.render("website_b2b.final_do_page", {
                 "do": None,
-                "inv": None
+                "inv": None,
+                'user': user,
             })
         </field>
         <field name="state">code</field>
