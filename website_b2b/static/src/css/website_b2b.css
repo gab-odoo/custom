@@ -49,6 +49,10 @@ tr.js_row > td {
     border-color: transparent !important;
     font-family: "Oswald" !important;
     letter-spacing: 1px !important;
+    left: 0;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
 }
 
 .navbar-default .navbar-nav > li > a {
