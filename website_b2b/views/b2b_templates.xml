@@ -59,6 +59,17 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="col-md-3 col-xs-0">
+                                    <img src="/website_b2b/static/src/img/order.png" style="max-width:150px"/>
+                                </div>
+                                <div class="col-md-9">
+                                    <a href="/website/action/website_b2b.confirm_do_new_delivery" class="btn btn-primary">Bestellung aufgeben</a>
+                                    <br/>
+                                    <p>Hier können Sie Ware nachordern, ohne eine Meldung zu machen.</p>
+                                    <br/><br/>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-3 col-xs-0">
                                     <img src="/website_b2b/static/src/img/overview.png" style="max-width:150px"/>
                                 </div>
                                 <div class="col-md-9">
@@ -97,11 +108,10 @@
                                 </td>
                                 <td>
                                     <p>
-                                        Die Lagerbestandsmeldung besteht aus zwei Schritten:<br/>
-                                        <span style="color:#d2232a">Schritt 1:</span> Tragen Sie ihren aktuellen Bestand in der markierten Spalte ein. Die Verkäufe werden automatisch errechnet und
-                                        Sie erhalten unsere Rechnung über die verkaufte Kommissionsware.<br/>
-                                        <span style="color:#808080">Schritt 2: Um ihre vereinbarten Zielbestände wieder aufzufüllen, errechnen wir automatisch, wieviel Ware Sie benötigen.
-                                            Wenn Sie mehr Ware als den Zielbestand benötigen, fügen Sie unten in der Liste Ihre Wunschartikel hinzu.</span>
+                                        Die Lagerbestandsmeldung besteht aus drei Schritten:<br/>
+                                        <span style="color:#d2232a">Schritt 1:</span>Tragen Sie ihren aktuellen Bestand in der markierten Spalte ein. Die Verkäufe werden automatisch errechnet.<br/>
+                                        <span style="color:#808080">Schritt 2: Bestätigen sie die Rechnung und Sie erhalten unsere Rechnung über die verkaufte Kommissionsware.</span><br/>
+                                        <span style="color:#808080">Schritt 3: Um ihre vereinbarten Zielbestände wieder aufzufüllen, errechnen wir automatisch, wieviel Ware Sie benötigen. Wenn Sie mehr Ware als den Zielbestand benötigen, fügen Sie unten in der Liste Ihre Wunschartikel hinzu.</span><br/>
                                     </p>
                                 </td>
                             </tr>
@@ -116,11 +126,10 @@
                                 </td>
                                 <td style="margin-left:20px">
                                     <p>
-                                        Die Verkaufsmeldung besteht aus zwei Schritten:<br/>
-                                        <span style="color:#d2232a">Schritt 1:</span> Tragen Sie ihre aktuellen Verkäufe in der markierten Spalte ein. Unsere Rechnung über die verkaufte Kommissionsware
-                                        wird automatisch erstellt.<br/>
-                                        <span style="color:#808080">Schritt 2: Um ihre vereinbarten Zielbestände wieder aufzufüllen, errechnen wir automatisch, wieviel Ware Sie benötigen.
-                                            Wenn Sie mehr Ware als den Zielbestand benötigen, fügen Sie unten in der Liste Ihre Wunschartikel hinzu.</span>
+                                        Die Verkaufsmeldung besteht aus drei Schritten:<br/>
+                                        <span style="color:#d2232a">Schritt 1:</span>Tragen Sie ihre aktuellen Verkäufe in der markierten Spalte ein.<br/>
+                                        <span style="color:#808080">Schritt 2: Bestätigen Sie die Rechnung. Unsere Rechnung über die verkaufte Kommissionsware wird automatisch erstellt.</span><br/>
+                                        <span style="color:#808080">Schritt 3: Um ihre vereinbarten Zielbestände wieder aufzufüllen, errechnen wir automatisch, wieviel Ware Sie benötigen. Wenn Sie mehr Ware als den Zielbestand benötigen, fügen Sie unten in der Liste Ihre Wunschartikel hinzu.</span><br/>
                                     </p>
                                 </td>
                             </tr>
@@ -131,6 +140,7 @@
                             <tr>
                                 <th> </th>
                                 <th>Artikel</th>
+                                <th>Kategorie</th>
                                 <th>Zuletzt gemeldeter Bestand</th>
                                 <th t-if="mode == 'inventory'">Aktueller Bestand</th>
                                 <th t-if="mode == 'sales'">Mein Verkäufe an Endkunden</th>
@@ -141,6 +151,7 @@
                                         <img t-att-src="'/website/image?model=product.product&amp;field=image_medium&amp;id=' + str(p.id)" height="128" width="128"/>
                                     </td>
                                     <td t-esc='p.name'/>
+                                    <td t-esc='p.categ_id.name'/>
                                     <td class="js_stock" t-esc='"%d" % p.qty_available'/>
                                     <td>
                                         <input type="number" t-att-name="p.id" min="0" value="0" step="1.0" class="js_in"/>
@@ -176,19 +187,20 @@
             <div class="wrap">
                 <div class="container">
                     <div class="oe_structure" />
-                    <h1>Invoice</h1>
                     <ol class="breadcrumb">
                         <li><a href="/website/action/website_b2b.welcome"><i class="fa fa-home"/></a></li>
                         <li t-if="mode == 'inventory'">Lagerbestand melden</li>
                         <li t-if="mode == 'sales'">Verkäufe melden</li>
                         <li class="active">Rechnung</li>
                     </ol>
+                    <h1>Rechnung</h1>
                     <form t-if="do" action="/website/action/website_b2b.confirm_do_new_delivery" method="post" name="confirm_do_new_delivery">
                         <input type="hidden" name="stock.picking_id" t-att-value="do.id"/>
                         <input type="hidden" name="all_pickings_ids" t-att-value="','.join(['%d' % p.id for p in all_pickings])"/>
                         <table class="table table-hover table-condensed">
                             <tr>
                                 <th>Artikel</th>
+                                <th>Kategorie</th>
                                 <th t-if="mode == 'inventory'" class="text-right">Zuletzt gemeldeter Bestand</th>
                                 <th t-if="mode == 'inventory'" class="text-right">Aktuell gemeldeter Bestand</th>
                                 <th class="text-right">Verkäufe an Endkunden</th>
@@ -198,6 +210,7 @@
                             <t t-as='picking' t-foreach='all_pickings'>
                                 <tr t-as='line' t-foreach='picking.move_lines'>
                                     <td><span t-esc='line.product_id.name'/></td>
+                                    <td t-esc='line.product_id.categ_id.name'/>
                                     <td class="text-right" t-if="mode == 'inventory'"><span t-esc="'%d' % line.product_id.qty_available"/></td>
                                     <td class="text-right" t-if="mode == 'inventory'"><span t-esc="stock_reported_by_you.get(str(line.product_id.id))"/></td>
                                     <t t-if="line.location_id.id == location_id">
@@ -250,7 +263,6 @@
             <div class="wrap">
                 <div class="container">
                     <div class="oe_structure"/>
-                    <h1>Delivery</h1>
                     <ol class="breadcrumb">
                         <li><a href="/website/action/website_b2b.welcome"><i class="fa fa-home"/></a></li>
                         <li>Meldung</li>
@@ -261,15 +273,14 @@
                     <table>
                         <tr>
                             <td>
-                                <img src="/website_b2b/static/src/img/stack.png" style="max-width:110px"/>
+                                <img src="/website_b2b/static/src/img/order.png" style="max-width:110px"/>
                             </td>
                             <td>
                                 <p>
-                                    Die Lagerbestandsmeldung besteht aus zwei Schritten:<br/>
-                                    <span style="color:#808080">Schritt 1: Tragen Sie ihren aktuellen Bestand in der markierten Spalte ein. Die Verkäufe werden automatisch errechnet und
-                                    Sie erhalten unsere Rechnung über die verkaufte Kommissionsware.</span><br/>
-                                    <span style="color:#d2232a">Schritt 2:</span> Um ihre vereinbarten Zielbestände wieder aufzufüllen, errechnen wir automatisch, wieviel Ware Sie benötigen.
-                                        Wenn Sie mehr Ware als den Zielbestand benötigen, fügen Sie unten in der Liste Ihre Wunschartikel hinzu.
+                                    Die Verkaufsmeldung besteht aus drei Schritten:<br/>
+                                    <span style="color:#808080">Schritt 1: Tragen Sie ihre aktuellen Verkäufe in der markierten Spalte ein.<br/>
+                                    Schritt 2: Bestätigen Sie die Rechnung. Unsere Rechnung über die verkaufte Kommissionsware wird automatisch erstellt.</span><br/>
+                                    <span style="color:#d2232a">Schritt 3:</span> Um ihre vereinbarten Zielbestände wieder aufzufüllen, errechnen wir automatisch, wieviel Ware Sie benötigen. Wenn Sie mehr Ware als den Zielbestand benötigen, fügen Sie unten in der Liste Ihre Wunschartikel hinzu.<br/>
                                 </p>
                             </td>
                         </tr>
@@ -280,19 +291,24 @@
                             <tr>
                                 <th> </th>
                                 <th>Artikel</th>
+                                <th>Kategorie</th>
                                 <th class="text-right">Aktueller Bestand</th>
-                                <th class="text-right">Erwarteter Bestand</th>
+                                <th class="text-right">Bestand inkl. offene Lieferungen</th>
                                 <th class="text-right">Zielbestand</th>
                                 <th class="text-right">Nachlieferung</th>
-                                <th class="text-right">Zusätzlich gewünschte Nachlieferung</th>
-                                <th class="text-right">Nachlieferung gesamt</th>
+                                <th class="text-right">Zusätzlich gewünschte Artikel</th>
+                                <th class="text-right">Lieferung gesamt</th>
                             </tr>
-                            <tr t-as='product' t-foreach='products' class="js_row">
+                            <t t-set="productssorted" t-value="products.sorted(key=lambda r: r.sequence)"/>
+                            <tr t-as='product' t-foreach='productssorted' class="js_row">
                                 <td>
                                     <img t-att-src="'/website/image?model=product.product&amp;field=image_medium&amp;id='+str(product.id)" height="128" width="128"/>
                                 </td>
                                 <td>
                                     <span t-esc='product.name'/>
+                                </td>
+                                <td>
+                                    <span t-esc='product.categ_id.name'/>
                                 </td>
                                 <td class="text-right">
                                     <span t-esc="'%d' % product.qty_available"/>
@@ -350,8 +366,8 @@
                             </td>
                             <td>
                                 <p>
-                                    Vielen Dank für Ihre Bestellung. Die Nachlieferung geht Ihnen in den nächsten 3 Werktagen zu. Sie erhalten eine Sendungsverfolgungsnummer
-                                    an Ihre eMailadresse <t t-esc="user.login"/>.
+                                    Vielen Dank für Ihre Bestellung. Sie erhalten eine separate Auftragsbestätigung mit Angabe der Verfügbarkeit der einzelnen Artikel.
+                                    Nach Versand der verfügbaren Ware erhalten Sie eine eMail mit der Sendungsverfolgungsnummer an: <t t-esc="user.login"/>.
                                 </p>
                             </td>
                         </tr>
@@ -360,10 +376,12 @@
                         <table t-if="do" class="table table-hover table-condensed">
                             <tr>
                                 <th>Artikel</th>
+                                <th>Kategorie</th>
                                 <th class="text-right">Menge</th>
                             </tr>
                             <tr t-as='line' t-foreach='do.move_lines'>
                                 <td><span t-esc='line.product_id.name'/></td>
+                                <td><span t-esc='line.product_id.categ_id.name'/></td>
                                 <td class="text-right"><span t-esc='"%d" % (line.product_qty)'/></td>
                             </tr>
                         </table>
@@ -410,7 +428,7 @@
                         </tr>
                         <tr>
                             <td/>
-                            <td>Offene Lieferungen</td><td>– Diese Nachlieferung ist unterwegs. Sie finden die Sendungsnr. in der Zusammenfassung.</td>
+                            <td>Offene Lieferungen</td><td>– noch nicht von Feuerwear bearbeitete Bestellungen.</td>
                         </tr>
                         <tr>
                             <td/>
@@ -418,19 +436,19 @@
                         </tr>
                         <tr>
                             <td/>
-                            <td>Retouren</td><td>– Wenn Sie Ware an uns zurückgeben mussten, wird der Fall hier gelistet</td>
+                            <td>Retouren</td><td>– Beinhaltet alle von Ihnen zurück gesandten Artikel.</td>
                         </tr>
                         <tr>
                             <td/>
-                            <td>Rechnungen</td><td>– Hier finden Sie alle Rechnungen über verkaufte Kommissionsware.</td>
+                            <td>Rechnungen</td><td>– Hier finden Sie alle Ihre Rechnungen.</td>
                         </tr>
                         <tr>
                             <td/>
-                            <td>Lagerbestand</td><td>– Der Lagerbestand gemäß Ihrer letzten Meldung. Hier aktualisieren Sie Ihren Lagerbestand</td>
+                            <td>Lagerbestand</td><td>– Ihr aktueller Warenbestand vor Ort. Abgeschlossene Lieferungen werden ab Versand bereits hinzu gezählt.</td>
                         </tr>
                         <tr>
                             <td/>
-                            <td>Zielbestand</td><td>– Hier können Sie dauerhaft Ihren Zielbestand anpassen.</td>
+                            <td>Zielbestand</td><td>– Hier sehen Sie die vereinbarten Zielbestände.</td>
                         </tr>
                     </table>
                     <!-- Open Deliveries -->
@@ -488,7 +506,9 @@
                                 <td t-esc="str(deliv.date)[:10]"/>
                                 <!-- <td><a t-att-href="'/web#model=stock.picking&amp;view_type=form&amp;id=%d' % deliv.id" target="_blank"><t t-esc="deliv.name"/></a></td> -->
                                 <td><a t-att-href="'/report/pdf/stock.report_picking/%d' % deliv.id" target="_blank"><t t-esc="deliv.name"/></a></td>
-                                <t t-set="lines_of_products" t-value="dict([(l.product_id.id, l.product_qty) for l in deliv.move_lines])"/>
+                                <t t-set="prodgroup" t-value="dict([(l.product_id.id, 0) for l in deliv.move_lines])"/>
+                                <t t-set="prodgroup2" t-value="[prodgroup.update({l.product_id.id: prodgroup.get(l.product_id.id, 0) + l.product_qty}) for l in deliv.move_lines]"/>
+                                <t t-set="lines_of_products" t-value="dict([(l.product_id.id, prodgroup.get(l.product_id.id, 0)) for l in deliv.move_lines])"/>
                                 <t t-foreach="stock" t-as="product"><td t-esc="'%d' % lines_of_products.get(product.id, 0)" class="text-center"/></t>
                            </tr>
                         </table>
@@ -544,6 +564,16 @@
                                     <t t-set="orderpoints" t-value="[op.product_min_qty for op in product.orderpoint_ids if op.location_id.id == location_id]"/>
                                     <td t-esc="('%d' % orderpoints[0]) if orderpoints else 'n/a'" class="text-center"/>
                                 </t>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><a name="zielbestand" href="#zielbestand">Zielbestand</a></h3>
+                        </div>
+                        <table class="table table-hover table-condensed">
+                            <tr>
+                                <td>Sie möchten Ihren Zielbestand dauerhaft ändern? Bitte sprechen Sie uns an, damit wir die Änderung gemeinsam mit Ihnen besprechen und vornehmen können.</td>
                             </tr>
                         </table>
                     </div>

@@ -5,6 +5,14 @@
     margin-top: 100px !important;
 }
 
+.oe_login_form {
+    margin-top: 100px !important;
+}
+
+.table {
+    word-wrap: break-word !important;
+}
+
 header a.navbar-brand img {
     max-height: 84px !important;
 }

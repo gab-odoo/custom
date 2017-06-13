@@ -65,7 +65,8 @@ else:
 
         # updating context gives us the good stock number for the location
         context.update({
-            'location': partner_location_id
+            'location': partner_location_id,
+            'lang': user.partner_id.lang,
         })
 
         mode = request.params['mode'] if 'mode' in request.params else None
@@ -128,7 +129,8 @@ elif form_data:
 
         # updating context gives us the good stock number for the location
         context.update({
-            'location': partner_location_id
+            'location': partner_location_id,
+            'lang': user.partner_id.lang,
         })
         location_id = partner_location_id
         # handling the reporting
@@ -286,6 +288,7 @@ journal_obj = pool['account.journal']
 move_obj = pool['stock.move']
 config_obj = pool['ir.config_parameter']
 invoice_obj = pool['account.invoice']
+invoice_line_obj = pool['account.invoice.line']
 invoice = invoice_obj.browse(cr, uid, [], context=context)
 
 partner_location_ids = location_obj.search(cr, uid, [('partner_id', '=', user.partner_id.id)], context=context)
@@ -322,8 +325,12 @@ elif form_data:
             'name':picking.name,
             'date_invoice':time.strftime('%Y-%m-%d'),
             'partner_id':picking.partner_id.id,
+            'x_journal_id':picking.partner_id.x_journal_id.id,
+            'fiscal_position_id':picking.partner_id.property_account_position_id.id,
             'account_id':picking.partner_id.property_account_payable_id.id,
+            'payment_term_id':picking.partner_id.property_payment_term_id.id,
         })
+
         #Add the lines, positive or negative depending on the move direction
         for pick in delivery_order_ids:
             for d_line in pick.move_lines:
@@ -331,6 +338,10 @@ elif form_data:
                     quantity = d_line.product_uom_qty
                 else:
                     quantity = -d_line.product_uom_qty
+                #get invoice line account and fpos
+                #invoice_line_obj.get_invoice_line_account(invoice.type, d_line.product_id.id, picking.partner_id.property_account_position_id.id, invoice.company_id)
+                #pdb.set_trace()
+                #create the invoice line
                 i_line_value={
                 'product_id':d_line.product_id.id,
                 'name':d_line.product_id.description if d_line.product_id.description else d_line.product_id.name,
@@ -339,8 +350,11 @@ elif form_data:
                 'price_unit':d_line.product_id.list_price,
                 'account_id':d_line.product_id.property_account_income_id.id if d_line.product_id.property_account_income_id else d_line.product_id.categ_id.property_account_income_categ_id.id,
                 'uom_id':d_line.product_uom.id,
+                #'invoice_line_tax_ids': [(6,0,[t.id for t in d_line.product_id.taxes_id])],
                 }
-                invoice.invoice_line_ids.create(i_line_value)
+                il=invoice.invoice_line_ids.create(i_line_value)
+                il._set_taxes()
+
 
 if not partner_location_ids:
     response = request.website.render("website_b2b.debug", {
@@ -352,7 +366,8 @@ else:
 
     # updating context gives us the good stock number for the location
     context.update({
-        'location': partner_location_id
+        'location': partner_location_id,
+        'lang': user.partner_id.lang,
     })
 
     domain = [
@@ -463,7 +478,9 @@ elif form_data:
                     'name':do.name,
                     'date_invoice':time.strftime('%Y-%m-%d'),
                     'partner_id':user.partner_id.id,
+                    'x_journal_id':user.partner_id.x_journal_id.id,
                     'account_id':user.partner_id.property_account_payable_id.id,
+                    'payment_term_id':picking.partner_id.property_payment_term_id.id,
                 }, context=context)
                 invoice = invoice_obj.browse(cr, uid, invoice_id, context=context)
 
@@ -479,9 +496,10 @@ elif form_data:
                                         'quantity': 1.0,
                                         'price_unit': carrier_id.get_price_from_picking(invoice.amount_total,0,0,0),
                                         'account_id':carrier_id.product_id.property_account_income_id.id if carrier_id.product_id.property_account_income_id else carrier_id.product_id.categ_id.property_account_income_categ_id.id,
-                                        'invoice_line_tax_id': [(6,0,[t.id for t in carrier_id.product_id.taxes_id])],
+                                        'invoice_line_tax_ids': [(6,0,[t.id for t in carrier_id.product_id.taxes_id])],
                                     })]
                         })
+                    invoice.compute_taxes()
                     workflow.trg_validate(uid, 'account.invoice', invoice.id, 'invoice_open', cr)
 
             response = request.website.render("website_b2b.final_do_page", {
@@ -492,6 +510,7 @@ elif form_data:
 
         else:
             if inv:
+                invoice.compute_taxes()
                 workflow.trg_validate(uid, 'account.invoice', int(inv), 'invoice_open', cr)
             response = request.website.render("website_b2b.final_do_page", {
                 "do": None,
@@ -560,7 +579,8 @@ else:
 
         partner_location_id = partner_location_ids[0]
         context.update({
-            'location': partner_location_id
+            'location': partner_location_id,
+            'lang': user.partner_id.lang,
         })      ## The line that changes the values of product.product ifo the location
         product_obj = pool['product.product']
         stock = product_obj.browse(cr, uid, product_obj.search(cr, uid, [], context=context), context=context)
