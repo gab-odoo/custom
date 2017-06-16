@@ -16,7 +16,7 @@
         <record id="b2b_user_read_b2b_product" model="ir.rule">
             <field name="name">B2B Product</field>
             <field name="model_id" ref="product.model_product_product"/>
-            <field name="domain_force">[('x_b2b_available', '=', True)]</field>
+            <field name="domain_force">['|',('sale_ok', '=', True),('type', '=', 'service')]</field>
             <field name="groups" eval="[(4, ref('website_b2b.group_user_portal'))]"/>
             <field eval="0" name="perm_unlink"/>
             <field eval="0" name="perm_write"/>

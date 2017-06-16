@@ -480,7 +480,7 @@ elif form_data:
                     'partner_id':user.partner_id.id,
                     'x_journal_id':user.partner_id.x_journal_id.id,
                     'account_id':user.partner_id.property_account_payable_id.id,
-                    'payment_term_id':picking.partner_id.property_payment_term_id.id,
+                    'payment_term_id':user.partner_id.property_payment_term_id.id,
                 }, context=context)
                 invoice = invoice_obj.browse(cr, uid, invoice_id, context=context)
 
