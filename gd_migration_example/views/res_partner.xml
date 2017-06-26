@@ -1,0 +1,18 @@
+<odoo>
+	<!-- FORM VIEW -->
+	<record model="ir.ui.view" id="gd_migration_example_res_partner">
+		<field name="name">gd_migration_example_res_partner</field>
+		<field name="model">res.partner</field>
+		<field name="inherit_id" ref="base.view_partner_form" />
+		<field name="priority" eval="22" />
+		<field name="arch" type="xml">
+			<field name="website" position="after">
+                <field name="x_date"/>
+                <field name="gn_date"/>
+				<button name="__export__.ir_act_server_270" string="Action button with external server action id" type="action"/>
+				<button name="%(__export__.ir_actions_270)d" string="Action button with external action id" type="action"/>
+				<button name="my_test_function" string="Object button" type="object"/>
+            </field>
+		</field>
+	</record>
+</odoo>
