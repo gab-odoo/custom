@@ -492,6 +492,7 @@ elif form_data:
                     invoice.write({'invoice_line_ids': [
                                     (0, 0, {
                                         'product_id': carrier_id.product_id.id,
+                                        'partner_id': user.partner_id.id,
                                         'name': carrier_id.product_id.name,
                                         'quantity': 1.0,
                                         'price_unit': carrier_id.get_price_from_picking(invoice.amount_total,0,0,0),
