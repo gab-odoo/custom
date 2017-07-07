@@ -462,15 +462,15 @@
                         </tr>
                     </table>
                     <!-- Open Deliveries -->
-                    <div class="panel panel-default">
+                    <div class="panel panel-default table-responsive">
                         <div class="panel-heading">
                             <h2 class="panel-title"><a name="open" href="#open">Offene Lieferungen</a></h2>
                         </div>
                         <table class="table table-hover table-condensed">
                             <tr>
-                                <th>Datum</th>
-                                <th>Referenz</th>
-                                <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center"/></t>
+                                <th class="big-cell">Datum</th>
+                                <th class="big-cell">Referenz</th>
+                                <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center cell"/></t>
                             </tr>
                             <tr t-foreach="open_deliveries" t-as="deliv">
                                 <td t-esc="str(deliv.date)[:10]"/>
@@ -482,15 +482,15 @@
                         </table>
                     </div>
                     <!-- Completed Deliveries -->
-                    <div class="panel panel-default">
+                    <div class="panel panel-default table-responsive">
                         <div class="panel-heading">
                             <h2 class="panel-title"><a name="completed" href="#completed">Abgeschlossene Lieferungen</a></h2>
                         </div>
                         <table class="table table-hover table-condensed">
                             <tr>
-                                <th>Datum</th>
-                                <th>Referenz</th>
-                                <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center"/></t>
+                                <th class="big-cell">Datum</th>
+                                <th class="big-cell">Referenz</th>
+                                <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center cell" style="width:80px"/></t>
                             </tr>
                             <tr t-foreach="completed_deliveries" t-as="deliv">
                                 <td t-esc="str(deliv.date)[:10]" />
@@ -502,15 +502,15 @@
                         </table>
                     </div>
                     <!-- Returns -->
-                    <div class="panel panel-default">
+                    <div class="panel panel-default table-responsive">
                         <div class="panel-heading">
                             <h2 class="panel-title"><a name="returns" href="#returns">Retouren</a></h2>
                         </div>
                         <table class="table table-hover table-condensed">
                             <tr>
-                                <th>Datum</th>
-                                <th>Referenz</th>
-                                <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center"/></t>
+                                <th class="big-cell">Datum</th>
+                                <th class="big-cell">Referenz</th>
+                                <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center cell"/></t>
                             </tr>
                             <tr t-foreach="returns" t-as="deliv">
                                 <td t-esc="str(deliv.date)[:10]"/>
@@ -524,18 +524,18 @@
                         </table>
                     </div>
                     <!-- Invoices -->
-                    <div class="panel panel-default">
+                    <div class="panel panel-default table-responsive">
                         <div class="panel-heading">
                             <h2 class="panel-title"><a name="invoices" href="#invoices">Rechnungen</a></h2>
                         </div>
                         <table class="table table-hover table-condensed">
                             <tr>
-                                <th>Datum</th>
-                                <th>Referenz</th>
-                                <th>Zahlungsziel</th>
-                                <th class="text-right">Gesamtbetrag</th>
-                                <th class="text-right">Status</th>
-                                <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center"/></t>
+                                <th class="big-cell">Datum</th>
+                                <th class="big-cell">Referenz</th>
+                                <th class="big-cell">Zahlungsziel</th>
+                                <th class="text-right big-cell">Gesamtbetrag</th>
+                                <th class="text-right cell">Status</th>
+                                <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center cell"/></t>
                             </tr>
                             <t t-foreach="invoices" t-as="inv" >
                                 <tr t-att-class="'danger' if overdues[inv.id] else ('info' if inv.state == 'open' else '')">
@@ -551,15 +551,15 @@
                         </table>
                     </div>
                     <!-- Stock -->
-                    <div class="panel panel-default">
+                    <div class="panel panel-default table-responsive">
                         <div class="panel-heading">
                             <h3 class="panel-title"><a name="stock" href="#stock">Lagerbestand</a></h3>
                         </div>
                         <table class="table table-hover table-condensed">
                             <tr>
-                                <th></th>
+                                <th class="big-cell"></th>
                                 <t t-foreach="stock" t-as="product">
-                                    <th t-esc="product.name" class="text-center"/>
+                                    <th t-esc="product.name" class="text-center cell"/>
                                 </t>
                             </tr>
                             <tr>
@@ -577,7 +577,7 @@
                             </tr>
                         </table>
                     </div>
-                    <div class="panel panel-default">
+                    <div class="panel panel-default table-responsive">
                         <div class="panel-heading">
                             <h3 class="panel-title"><a name="zielbestand" href="#zielbestand">Zielbestand</a></h3>
                         </div>
