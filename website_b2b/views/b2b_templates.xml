@@ -9,6 +9,7 @@
         <xpath expr="//t[@t-call-assets='web.assets_common']" position="after">
             <link rel="stylesheet" href="/website_b2b/static/src/css/website_b2b.css"/>
             <link rel="icon" href="/website_b2b/static/src/img/favicon.ico" type="image/x-icon"/>
+            <script type="text/javascript" src="/website_b2b/static/src/js/layout_improvements.js"/>
         </xpath>
     </template>
 
@@ -92,16 +93,21 @@
             <t t-set="head">
                 <script type="text/javascript" src="/website_b2b/static/src/js/sales_inventory_report.js"/>
             </t>
+            <div class="responsive-background" style="background-image: url(/website_b2b/static/src/img/bg.jpg);position:fixed;">
+                    </div>
+            <div class="responsive-background" style="background-color: rgba(255, 255, 255, 0.5);position:fixed;">
+                    </div>
             <div class="wrap">
+
                 <div class="container">
-                    <ol class="breadcrumb">
+                    <ol class="breadcrumb" style="position: fixed;top: 100px;">
                         <li><a href="/website/action/website_b2b.welcome"><i class="fa fa-home"/></a></li>
                         <li t-if="mode == 'inventory'" class="active">Lagerbestand melden</li>
                         <li t-if="mode == 'sales'" class="active">Verkäufe melden</li>
                     </ol>
                     <t t-if="mode == 'inventory'">
-                        <h1>Lagerbestand melden</h1>
-                        <table>
+                        <h1 style="position: fixed;top: 115px;">Lagerbestand melden</h1>
+                        <table id="uhelp" style="position: fixed;top: 180px ;width: 70%;">
                             <tr>
                                 <td>
                                     <img src="/website_b2b/static/src/img/stack.png" style="max-width:110px"/>
@@ -118,8 +124,8 @@
                         </table>
                     </t>
                     <t t-if="mode == 'sales'">
-                        <h1>Verkäufe melden</h1>
-                        <table>
+                        <h1 style="position: fixed;top: 115px;">Verkäufe melden</h1>
+                        <table id="uhelp" style="position: fixed;top: 180px ;width: 70%;">
                             <tr>
                                 <td>
                                     <img src="/website_b2b/static/src/img/sales.png" style="max-width:130px"/>
@@ -135,25 +141,25 @@
                             </tr>
                         </table>
                     </t>
-                    <form method="post" t-att-name="mode" action="/website/action/website_b2b.invoice">
-                        <table class="table table-hover table-condensed">
-                            <tr>
-                                <th> </th>
-                                <th>Artikel</th>
-                                <th>Kategorie</th>
-                                <th>Zuletzt gemeldeter Bestand</th>
-                                <th t-if="mode == 'inventory'">Aktueller Bestand</th>
-                                <th t-if="mode == 'sales'">Mein Verkäufe an Endkunden</th>
+                    <form method="post" t-att-name="mode" action="/website/action/website_b2b.invoice" class="responsive-margin-top">
+                        <table class="table table-hover table-condensed table-responsive">
+                            <tr class="fixed-header">
+                                <th style="width: 20%;"> </th>
+                                <th style="width: 20%;">Artikel</th>
+                                <th style="width: 20%;">Kategorie</th>
+                                <th style="width: 20%;">Zuletzt gemeldeter Bestand</th>
+                                <th style="width: 20%;" t-if="mode == 'inventory'">Aktueller Bestand</th>
+                                <th style="width: 20%;" t-if="mode == 'sales'">Mein Verkäufe an Endkunden</th>
                             </tr>
                             <t t-as='p' t-foreach='products'>
-                                <tr class="js_row">
-                                    <td>
+                                <tr class="js_row" style="width: 70%;">
+                                    <td style="width: 20%;">
                                         <img t-att-src="'/website/image?model=product.product&amp;field=image_medium&amp;id=' + str(p.id)" height="128" width="128"/>
                                     </td>
-                                    <td t-esc='p.name'/>
-                                    <td t-esc='p.categ_id.name'/>
-                                    <td class="js_stock" t-esc='"%d" % p.qty_available'/>
-                                    <td>
+                                    <td t-esc='p.name' style="width: 20%;"/>
+                                    <td t-esc='p.categ_id.name' style="width: 20%;"/>
+                                    <td class="js_stock" t-esc='"%d" % p.qty_available' style="width: 20%;"/>
+                                    <td style="width: 20%;">
                                         <input type="number" t-att-name="p.id" min="0" value="0" step="1.0" class="js_in"/>
                                     </td>
                                 </tr>
@@ -260,17 +266,21 @@
             <t t-set="head">
                 <script type="text/javascript" src="/website_b2b/static/src/js/new_delivery.js"/>
             </t>
+            <div class="responsive-background" style="background-image: url(/website_b2b/static/src/img/bg.jpg);position:fixed;">
+                    </div>
+            <div class="responsive-background" style="background-color: rgba(255, 255, 255, 0.5);position:fixed;">
+                    </div>
             <div class="wrap">
                 <div class="container">
                     <div class="oe_structure"/>
-                    <ol class="breadcrumb">
+                    <ol class="breadcrumb" style="position: fixed;top: 100px;">
                         <li><a href="/website/action/website_b2b.welcome"><i class="fa fa-home"/></a></li>
                         <li>Meldung</li>
                         <li>Rechnung</li>
                         <li class="active">Nachlieferung</li>
                     </ol>
-                    <h1>Nachlieferung bestätigen</h1>
-                    <table>
+                    <h1 style="position: fixed;top: 115px;">Nachlieferung bestätigen</h1>
+                    <table id="uhelp" style="position: fixed;top: 180px ;width: 70%;">
                         <tr>
                             <td>
                                 <img src="/website_b2b/static/src/img/order.png" style="max-width:110px"/>
@@ -285,19 +295,19 @@
                             </td>
                         </tr>
                     </table>
-                    <form action="/website/action/website_b2b.finish" method="post" name="new_delivery_page">
+                    <form action="/website/action/website_b2b.finish" method="post" name="new_delivery_page" class="responsive-margin-top">
                         <input type="hidden" name="inv" t-att-value="inv"/>
-                        <table class="table table-hover table-condensed">
-                            <tr>
-                                <th> </th>
-                                <th>Artikel</th>
-                                <th>Kategorie</th>
-                                <th class="text-right">Aktueller Bestand</th>
-                                <th class="text-right">Bestand inkl. offene Lieferungen</th>
-                                <th class="text-right">Zielbestand</th>
-                                <th class="text-right">Nachlieferung</th>
-                                <th class="text-right">Zusätzlich gewünschte Artikel</th>
-                                <th class="text-right">Lieferung gesamt</th>
+                        <table class="table table-hover table-condensed table-responsive">
+                            <tr class="fixed-header">
+                                <th style="width: 10%;"> </th>
+                                <th style="width: 10%;">Artikel</th>
+                                <th style="width: 10%;">Kategorie</th>
+                                <th style="width: 10%;" class="text-right">Aktueller Bestand</th>
+                                <th style="width: 10%;" class="text-right">Bestand inkl. offene Lieferungen</th>
+                                <th style="width: 10%;" class="text-right">Zielbestand</th>
+                                <th style="width: 10%;" class="text-right">Nachlieferung</th>
+                                <th style="width: 10%;" class="text-right">Zusätzlich gewünschte Artikel</th>
+                                <th style="width: 10%;" class="text-right">Lieferung gesamt</th>
                             </tr>
                             <t t-set="productssorted" t-value="products.sorted(key=lambda r: r.sequence)"/>
                             <tr t-as='product' t-foreach='productssorted' class="js_row">
