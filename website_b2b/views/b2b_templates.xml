@@ -418,11 +418,21 @@
     </template>
 
     <!-- Overview -->
+
+    <template id="website_layout_overview" name="B2B Overview" inherit_id="website.layout" primary="True">
+        <xpath expr="//div[@id='wrapwrap']" position="attributes">
+            <attribute name="id"></attribute>
+        </xpath>
+        <xpath expr="//body" position="attributes">
+            <attribute name="style">overflow-x:auto</attribute>
+        </xpath>
+    </template>
+
     <template id="partner_overview_page" name="B2B Overview">
-        <t t-call="website.layout">
-            <div class="wrap">
-                <div class="container" style="width: 100%;">
-                    <ol class="breadcrumb">
+        <t t-call="website_b2b.website_layout_overview">
+            <div class="wrap" style="margin-top:0px !important;padding-top:80px">
+                <div style="margin-left:50px">
+                    <ol class="breadcrumb" style="width:20%">
                         <li><a href="/website/action/website_b2b.welcome"><i class="fa fa-home"/></a></li>
                         <li class="active">Übersicht</li>
                     </ol>
@@ -462,35 +472,45 @@
                         </tr>
                     </table>
                     <!-- Open Deliveries -->
-                    <div class="panel panel-default table-responsive">
+                    <div class="panel panel-default" style="display:inline-block">
                         <div class="panel-heading">
                             <h2 class="panel-title"><a name="open" href="#open">Offene Lieferungen</a></h2>
                         </div>
                         <table class="table table-hover table-condensed">
+                            <colgroup width="200"/>
                             <tr>
                                 <th class="big-cell">Datum</th>
                                 <th class="big-cell">Referenz</th>
                                 <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center cell"/></t>
                             </tr>
                             <tr t-foreach="open_deliveries" t-as="deliv">
-                                <td t-esc="str(deliv.date)[:10]"/>
+                                <td t-esc="str(deliv.date)[:10]" class="big-cell"/>
                                 <!-- <td><a t-att-href="'/web#model=stock.picking&amp;view_type=form&amp;id=%d' % deliv.id" target="_blank"><t t-esc="deliv.name"/></a></td> -->
-                                <td><a t-att-href="'/report/pdf/stock.report_picking/%d' % deliv.id" target="_blank"><t t-esc="deliv.name"/></a></td>
+                                <td class="big-cell"><a t-att-href="'/report/pdf/stock.report_picking/%d' % deliv.id" target="_blank"><t t-esc="deliv.name"/></a></td>
                                 <t t-set="lines_of_products" t-value="dict([(l.product_id.id, l.product_qty) for l in deliv.move_lines])"/>
-                                <t t-foreach="stock" t-as="product"><td t-esc="'%d' % lines_of_products.get(product.id, 0)" class="text-center"/></t>
+                                <t t-foreach="stock" t-as="product"><td t-esc="'%d' % lines_of_products.get(product.id, 0)" class="text-center cell"/></t>
                            </tr>
+                           <tr>
+                                <th>Summe</th>
+                                <th/>
+                                <t t-foreach="stock" t-as="product">
+                                    <t t-set="lines_of_products_sum" t-value="sum([l.product_qty for deliv in open_deliveries for l in deliv.move_lines if l.product_id.id == product.id])"/>
+                                    <th t-esc="int(lines_of_products_sum)" class="text-center cell"/>
+                                </t>
+                            </tr>
                         </table>
                     </div>
                     <!-- Completed Deliveries -->
-                    <div class="panel panel-default table-responsive">
+                    <div class="panel panel-default" style="display:inline-block">
                         <div class="panel-heading">
                             <h2 class="panel-title"><a name="completed" href="#completed">Abgeschlossene Lieferungen</a></h2>
                         </div>
                         <table class="table table-hover table-condensed">
+                            <colgroup width="200"/>
                             <tr>
                                 <th class="big-cell">Datum</th>
                                 <th class="big-cell">Referenz</th>
-                                <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center cell" style="width:80px"/></t>
+                                <t t-foreach="stock" t-as="product"><th t-esc="product.name" class="text-center cell"/></t>
                             </tr>
                             <tr t-foreach="completed_deliveries" t-as="deliv">
                                 <td t-esc="str(deliv.date)[:10]" />
@@ -499,14 +519,23 @@
                                 <t t-set="lines_of_products" t-value="dict([(l.product_id.id, l.product_qty) for l in deliv.move_lines])"/>
                                 <t t-foreach="stock" t-as="product"><td t-esc="'%d' % lines_of_products.get(product.id, 0)" class="text-center"/></t>
                            </tr>
+                           <tr>
+                                <th>Summe</th>
+                                <th/>
+                                <t t-foreach="stock" t-as="product">
+                                    <t t-set="lines_of_products_sum" t-value="sum([l.product_qty for deliv in open_deliveries for l in deliv.move_lines if l.product_id.id == product.id])"/>
+                                    <th t-esc="int(lines_of_products_sum)" class="text-center cell"/>
+                                </t>
+                            </tr>
                         </table>
                     </div>
                     <!-- Returns -->
-                    <div class="panel panel-default table-responsive">
+                    <div class="panel panel-default" style="display:inline-block">
                         <div class="panel-heading">
                             <h2 class="panel-title"><a name="returns" href="#returns">Retouren</a></h2>
                         </div>
                         <table class="table table-hover table-condensed">
+                            <colgroup width="200"/>
                             <tr>
                                 <th class="big-cell">Datum</th>
                                 <th class="big-cell">Referenz</th>
@@ -519,16 +548,25 @@
                                 <t t-set="prodgroup" t-value="dict([(l.product_id.id, 0) for l in deliv.move_lines])"/>
                                 <t t-set="prodgroup2" t-value="[prodgroup.update({l.product_id.id: prodgroup.get(l.product_id.id, 0) + l.product_qty}) for l in deliv.move_lines]"/>
                                 <t t-set="lines_of_products" t-value="dict([(l.product_id.id, prodgroup.get(l.product_id.id, 0)) for l in deliv.move_lines])"/>
-                                <t t-foreach="stock" t-as="product"><td t-esc="'%d' % lines_of_products.get(product.id, 0)" class="text-center"/></t>
+                                <t t-foreach="stock" t-as="product"><td t-esc="'%d' % lines_of_products.get(product.id, 0)" class="text-center cell"/></t>
                            </tr>
+                           <tr>
+                                <th>Summe</th>
+                                <th/>
+                                <t t-foreach="stock" t-as="product">
+                                    <t t-set="lines_of_products_sum" t-value="sum([l.product_qty for deliv in open_deliveries for l in deliv.move_lines if l.product_id.id == product.id])"/>
+                                    <th t-esc="int(lines_of_products_sum)" class="text-center cell"/>
+                                </t>
+                            </tr>
                         </table>
                     </div>
                     <!-- Invoices -->
-                    <div class="panel panel-default table-responsive">
+                    <div class="panel panel-default" style="display:inline-block">
                         <div class="panel-heading">
                             <h2 class="panel-title"><a name="invoices" href="#invoices">Rechnungen</a></h2>
                         </div>
                         <table class="table table-hover table-condensed">
+                            <colgroup width="200"/>
                             <tr>
                                 <th class="big-cell">Datum</th>
                                 <th class="big-cell">Referenz</th>
@@ -548,10 +586,20 @@
                                     <t t-foreach="stock" t-as="product"><td t-esc="'%d' % lines_of_products.get(product.id, 0)" class="text-center"/></t>
                                 </tr>
                            </t>
+
+                            <tr>
+                                <th>Summe</th>
+                                <th/><th/><th/><th/>
+                                <t t-foreach="stock" t-as="product">
+                                    <t t-set="lines_of_products_sum" t-value="sum([l.quantity for inv in invoices for l in inv.invoice_line_ids if l.product_id.id == product.id])"/>
+                                    <th t-esc="int(lines_of_products_sum)" class="text-center cell"/>
+                                </t>
+                            </tr>
+
                         </table>
                     </div>
                     <!-- Stock -->
-                    <div class="panel panel-default table-responsive">
+                    <div class="panel panel-default" style="display:inline-block">
                         <div class="panel-heading">
                             <h3 class="panel-title"><a name="stock" href="#stock">Lagerbestand</a></h3>
                         </div>
@@ -577,7 +625,7 @@
                             </tr>
                         </table>
                     </div>
-                    <div class="panel panel-default table-responsive">
+                    <div class="panel panel-default" style="display:inline-block">
                         <div class="panel-heading">
                             <h3 class="panel-title"><a name="zielbestand" href="#zielbestand">Zielbestand</a></h3>
                         </div>
