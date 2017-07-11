@@ -523,7 +523,7 @@
                                 <th>Summe</th>
                                 <th/>
                                 <t t-foreach="stock" t-as="product">
-                                    <t t-set="lines_of_products_sum" t-value="sum([l.product_qty for deliv in open_deliveries for l in deliv.move_lines if l.product_id.id == product.id])"/>
+                                    <t t-set="lines_of_products_sum" t-value="sum([l.product_qty for deliv in completed_deliveries for l in deliv.move_lines if l.product_id.id == product.id])"/>
                                     <th t-esc="int(lines_of_products_sum)" class="text-center cell"/>
                                 </t>
                             </tr>
@@ -554,7 +554,7 @@
                                 <th>Summe</th>
                                 <th/>
                                 <t t-foreach="stock" t-as="product">
-                                    <t t-set="lines_of_products_sum" t-value="sum([l.product_qty for deliv in open_deliveries for l in deliv.move_lines if l.product_id.id == product.id])"/>
+                                    <t t-set="lines_of_products_sum" t-value="sum([l.product_qty for deliv in returns for l in deliv.move_lines if l.product_id.id == product.id])"/>
                                     <th t-esc="int(lines_of_products_sum)" class="text-center cell"/>
                                 </t>
                             </tr>
