@@ -20,20 +20,19 @@
 ##############################################################################
 
 {
-    'name': 'Consolidation Partner Reference on Account Move Lines',
+    'name': 'Account and Partner Fields on Expense Sheet Readonly for Employees',
     'version': '1.0',
     'category': 'Metro',
     'description': """
-Consolidation Partner Reference on Account Move Lines
+Account and Partner Fields on Expense Sheet Readonly for Employees
     """,
     'author': 'Odoo SA',
     'depends': [
-        'account_accountant',
+        'hr',
+        'hr_expense',
     ],
     'data': [
-        'data/fields.xml',
-        'views/account_move_line.xml',
-        'views/res_partner.xml',
+        'views/hr_expense.xml',
     ],
     'installable': True,
     'auto_install': False,

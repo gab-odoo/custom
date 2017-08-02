@@ -1,0 +1,33 @@
+<odoo>
+	<!-- FORM VIEW -->
+	<record model="ir.ui.view" id="metro_hr_expense_form_view_officer">
+		<field name="name">metro_hr_expense_form_view_officer</field>
+		<field name="model">hr.expense</field>
+		<field name="inherit_id" ref="hr_expense.hr_expense_form_view" />
+		<field name="priority" eval="22" />
+		<field name="groups_id" eval="[(4,ref('hr.group_hr_user'))]"/>
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='account_id']" position="attributes">
+				<attribute name="readonly">0</attribute>
+            </xpath>
+			<xpath expr="//field[@name='employee_id']" position="attributes">
+				<attribute name="readonly">0</attribute>
+            </xpath>
+		</field>
+	</record>
+	<record model="ir.ui.view" id="metro_hr_expense_form_view_employee">
+		<field name="name">metro_hr_expense_form_view_employee</field>
+		<field name="model">hr.expense</field>
+		<field name="inherit_id" ref="hr_expense.hr_expense_form_view" />
+		<field name="priority" eval="22" />
+		<field name="groups_id" eval="[(4,ref('base.group_user'))]"/>
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='account_id']" position="attributes">
+				<attribute name="readonly">1</attribute>
+            </xpath>
+			<xpath expr="//field[@name='employee_id']" position="attributes">
+				<attribute name="readonly">1</attribute>
+            </xpath>
+		</field>
+	</record>
+</odoo>
