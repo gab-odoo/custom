@@ -1,0 +1,69 @@
+<odoo>
+	<!-- TREE VIEWS -->
+	<record model="ir.ui.view" id="metro_account_move_type_tree">
+		<field name="name">metro_movement_types_tree</field>
+		<field name="model">account.move.type</field>
+		<field name="priority" eval="22" />
+		<field name="arch" type="xml">
+			<tree string="Movement Types" editable="top">
+				<field name="user_type_ids" widget="many2many_tags"/>
+                <field name="name"/>
+                <field name="set"/>
+                <field name="code"/>
+			</tree>
+		</field>
+	</record>
+
+
+	<record model="ir.ui.view" id="metro_view_movement_type_move_line_tree">
+		<field name="name">metro_view_partner_form_conso_partner_move_line_tree</field>
+		<field name="model">account.move.line</field>
+		<field name="inherit_id" ref="account.view_move_line_tree" />
+		<field name="priority" eval="22" />
+		<field name="arch" type="xml">
+			<xpath expr="//tree" position="attributes">
+				<attribute name="editable">1</attribute>
+			</xpath>
+			<xpath expr="//field[@name='partner_id']" position="after">
+				<field name="user_type_id" invisible="1"/>
+                <field name="movement_type_id"/>
+                <field name="set" readonly="1"/>
+                <field name="code" readonly="1"/>
+            </xpath>
+		</field>
+	</record>
+
+
+    <!-- FORM VIEW -->
+	<record model="ir.ui.view" id="metro_view_movement_type_move_line_form">
+		<field name="name">metro_view_partner_form_conso_partner_move_line_form</field>
+		<field name="model">account.move.line</field>
+		<field name="inherit_id" ref="account.view_move_line_form" />
+		<field name="priority" eval="22" />
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='partner_id']" position="after">
+				<field name="user_type_id" invisible="1"/>
+                <field name="movement_type_id"/>
+                <field name="set" readonly="1"/>
+                <field name="code" readonly="1"/>
+            </xpath>
+		</field>
+	</record>
+
+
+	<!--ACTION -->
+	<record model="ir.actions.act_window" id="action_show_movement_types">
+            <field name="name">Movement Types</field>
+            <field name="res_model">account.move.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0),
+                      (0, 0, {'view_mode': 'tree', 'view_id': ref('metro_account_move_type_tree')}),
+                       ]"/>
+            <field name="domain"></field>
+        </record>
+
+    <!-- MENU ITEM -->
+    <menuitem id="menu_movement_types" name="Movement Types" parent="account.account_account_menu" sequence="50" action="action_show_movement_types"/>
+</odoo>
