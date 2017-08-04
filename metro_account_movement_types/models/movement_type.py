@@ -22,5 +22,5 @@ class AccountMoveLine(models.Model):
 
     user_type_id = fields.Many2one(related='account_id.user_type_id')
     movement_type_id = fields.Many2one('account.move.type', string='Movement Type', domain="[('user_type_ids','in',user_type_id)]")
-    set = fields.Char(related='movement_type_id.set', string='Variation-Detail Set')
-    code = fields.Char(related='movement_type_id.code', string='Code')
+    set = fields.Char(related='movement_type_id.set', string='Variation-Detail Set', store="True")
+    code = fields.Char(related='movement_type_id.code', string='Code', store="True")
