@@ -21,9 +21,10 @@
 
 {
     'name': 'Consolidation Partner Reference on Account Move Lines',
-    'version': '1.0',
+    'version': '0.5',
     'category': 'Metro',
     'description': """
+---This is a Proof of Concept---
 Consolidation Partner Reference on Account Move Lines
     """,
     'author': 'Odoo SA',
@@ -32,8 +33,9 @@ Consolidation Partner Reference on Account Move Lines
     ],
     'data': [
         'data/fields.xml',
-        'views/account_move_line.xml',
-        'views/res_partner.xml',
+        'views/account_move_line_views.xml',
+        'views/account_move_views.xml',
+        'views/res_partner_views.xml',
     ],
     'installable': True,
     'auto_install': False,

@@ -1,0 +1,14 @@
+<odoo>
+	<!-- FORM VIEWS -->
+    <record model="ir.ui.view" id="metro_view_conso_partner_ref_move_form">
+		<field name="name">metro_view_conso_partner_ref_form</field>
+		<field name="model">account.move</field>
+		<field name="inherit_id" ref="account.view_move_form" />
+		<field name="priority" eval="16" />
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='analytic_account_id']" position="after">
+				<field name="x_conso_partner_ref" readonly="1"/>
+			</xpath>
+		</field>
+	</record>
+</odoo>

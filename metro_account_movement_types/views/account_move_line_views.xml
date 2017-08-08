@@ -1,0 +1,36 @@
+<odoo>
+	<!-- TREE VIEWS -->
+    <record model="ir.ui.view" id="metro_view_movement_type_move_line_tree">
+		<field name="name">metro_view_partner_form_conso_partner_move_line_tree</field>
+		<field name="model">account.move.line</field>
+		<field name="inherit_id" ref="account.view_move_line_tree" />
+		<field name="priority" eval="22" />
+		<field name="arch" type="xml">
+			<xpath expr="//tree" position="attributes">
+				<attribute name="editable">1</attribute>
+			</xpath>
+			<xpath expr="//field[@name='partner_id']" position="after">
+				<field name="user_type_id" invisible="1"/>
+                <field name="movement_type_id"/>
+                <field name="set" readonly="1"/>
+                <field name="code" readonly="1"/>
+            </xpath>
+		</field>
+	</record>
+
+	<!-- FORM VIEWS -->
+	<record model="ir.ui.view" id="metro_view_movement_type_move_line_form">
+		<field name="name">metro_view_partner_form_conso_partner_move_line_form</field>
+		<field name="model">account.move.line</field>
+		<field name="inherit_id" ref="account.view_move_line_form" />
+		<field name="priority" eval="22" />
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='partner_id']" position="after">
+				<field name="user_type_id" invisible="1"/>
+                <field name="movement_type_id"/>
+                <field name="set" readonly="1"/>
+                <field name="code" readonly="1"/>
+            </xpath>
+		</field>
+	</record>
+</odoo>

@@ -21,9 +21,10 @@
 
 {
     'name': 'Account and Partner Fields on Expense Sheet Readonly for Employees',
-    'version': '1.0',
+    'version': '0.5',
     'category': 'Metro',
     'description': """
+---This is a Proof of Concept---
 Account and Partner Fields on Expense Sheet Readonly for Employees
     """,
     'author': 'Odoo SA',

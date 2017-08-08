@@ -21,10 +21,13 @@
 
 {
     'name': 'Movement Types on Account Moves',
-    'version': '1.0',
+    'version': '0.5',
     'category': 'Metro',
     'description': """
-Movement Types on Account Moves
+---This is a Proof of Concept---
+Movement Types on Account Moves Lines depending on Account Types, 
+import Metro Movement types + mapping to Account Types, 
+Menu entry for Account and Movement Types.
     """,
     'author': 'Odoo SA',
     'depends': [
@@ -32,6 +35,10 @@ Movement Types on Account Moves
     ],
     'data': [
         'views/movement_type_views.xml',
+        'views/account_move_views.xml',
+        'views/account_move_line_views.xml',
+        'data/account.move.type.csv',
+        'security/ir.model.access.csv',
     ],
     'installable': True,
     'auto_install': False,
