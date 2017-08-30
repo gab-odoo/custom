@@ -326,7 +326,7 @@
                                 <td class="text-right">
                                     <span t-esc="'%d' % product.virtual_available"/>
                                 </td>
-                                <t t-set="orderpoints" t-value="[op.product_min_qty for op in product.orderpoint_ids if op.location_id.id == location_id]"/>
+                                <t t-set="orderpoints" t-value="[op.product_min_qty for op in product.with_context(active_test=False).orderpoint_ids if op.location_id.id == location_id and not op.active]"/>
                                 <t t-set="orderpoint" t-value="orderpoints[0] if orderpoints else 0"/>
                                 <td class="text-right">
                                     <span t-esc='"%d" % orderpoint'/>
@@ -619,7 +619,7 @@
                             <tr>
                                 <th>Zielbestand</th>
                                 <t t-foreach="stock" t-as="product">
-                                    <t t-set="orderpoints" t-value="[op.product_min_qty for op in product.orderpoint_ids if op.location_id.id == location_id]"/>
+                                    <t t-set="orderpoints" t-value="[op.product_min_qty for op in product.with_context(active_test=False).orderpoint_ids if op.location_id.id == location_id and not op.active]"/>
                                     <td t-esc="('%d' % orderpoints[0]) if orderpoints else 'n/a'" class="text-center"/>
                                 </t>
                             </tr>
