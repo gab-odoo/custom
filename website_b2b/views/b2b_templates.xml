@@ -226,6 +226,7 @@
                                         <td class="text-right text-danger"><span t-esc='"%d" % -line.product_qty'/></td>
                                     </t>
                                     <t t-set="price" t-value="picking.partner_id.property_product_pricelist.with_context(uom=line.product_id.uom_id.id).price_get(line.product_id.id, line.product_qty, line.picking_id.partner_id)[line.picking_id.partner_id.property_product_pricelist.id]"/>
+                                        <td class="text-right"><span t-esc='"%d" % price'/></td>
                                     <t t-if="line.location_id.id == location_id">
                                         <td class="text-right"><span t-esc='"%.2f" % (line.product_qty * price)'/></td>
                                     </t>
