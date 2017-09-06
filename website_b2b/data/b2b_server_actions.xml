@@ -294,6 +294,8 @@ config_obj = pool['ir.config_parameter']
 invoice_obj = pool['account.invoice']
 invoice_line_obj = pool['account.invoice.line']
 invoice = invoice_obj.browse(cr, uid, [], context=context)
+imd = pool['ir.model.data']
+_, picking_type_id = imd.get_object_reference(cr, uid, 'website_b2b', 'b2b_stock_picking_out')
 
 partner_location_ids = location_obj.search(cr, uid, [('partner_id', '=', user.partner_id.id)], context=context)
 is_user = user_obj.has_group(cr, uid, 'base.group_user') or user_obj.has_group(cr, uid, 'website_b2b.group_user_portal')
@@ -303,64 +305,67 @@ if not is_user:
 
 elif form_data:
     #confirm the pickings (normal and returns) from the last step
-    all_picking_ids = [int(x) for x in (form_data.get('all_pickings_ids') or '').split(',')]
-    delivery_order_ids = self.browse(cr, uid, all_picking_ids, context=context)
-    for delivery_order in delivery_order_ids:
-        if delivery_order.state == 'draft':
-            delivery_order.sudo().action_confirm()
-            if delivery_order.state != 'assigned':
-                delivery_order.action_assign()
-        for pack in delivery_order.pack_operation_ids:
-            if pack.product_qty > 0:
-                pack.write({'qty_done': pack.product_qty})
-            else:
-                pack.unlink()
-        delivery_order.sudo().do_transfer()
+    all_picking_ids=form_data.get('all_pickings_ids') or False
+    if all_picking_ids:
+        all_picking_ids = [int(x) for x in (form_data.get('all_pickings_ids') or '').split(',')]
+        delivery_order_ids = self.browse(cr, uid, all_picking_ids, context=context)
 
-
-    # create and validate an invoice for the DO
-    journal_ids = journal_obj.search(cr, uid, [
-        ('type', '=', 'sale')
-    ])
-    #Create new invoice, we take the first picking to have the header data
-    picking=delivery_order_ids[0]
-    if picking:
-        invoice = env['account.invoice'].create({
-            'name':picking.name,
-            'date_invoice':time.strftime('%Y-%m-%d'),
-            'partner_id':picking.partner_id.id,
-            'x_journal_id':picking.partner_id.x_journal_id.id,
-            'fiscal_position_id':picking.partner_id.property_account_position_id.id,
-            'account_id':picking.partner_id.property_account_payable_id.id,
-            'payment_term_id':picking.partner_id.property_payment_term_id.id,
-        })
-
-        #Add the lines, positive or negative depending on the move direction
-        for pick in delivery_order_ids:
-            for d_line in pick.move_lines:
-                if [d_line.location_id.id] == partner_location_ids:
-                    quantity = d_line.product_uom_qty
+        for delivery_order in delivery_order_ids:
+            if delivery_order.state == 'draft':
+                delivery_order.sudo().action_confirm()
+                if delivery_order.state != 'assigned':
+                    delivery_order.action_assign()
+            for pack in delivery_order.pack_operation_ids:
+                if pack.product_qty > 0:
+                    pack.write({'qty_done': pack.product_qty})
                 else:
-                    quantity = -d_line.product_uom_qty
-                #get invoice line account and fpos
+                    pack.unlink()
+            delivery_order.sudo().do_transfer()
 
-                #create the invoice line
-                if picking.partner_id.property_product_pricelist:
-                    price_unit = pool['product.pricelist'].price_get(cr, uid, [picking.partner_id.property_product_pricelist.id],d_line.product_id.id, quantity,context={'uom': d_line.product_uom.id})[picking.partner_id.property_product_pricelist.id]
-                else:
-                    price_unit = d_line.product_id.list_price
-                taxes = d_line.product_id.taxes_id or d_line.account_id.tax_ids
-                i_line_value={
-                'product_id':d_line.product_id.id,
-                'name':d_line.product_id.description if d_line.product_id.description else d_line.product_id.name,
-                'invoice_id':invoice.id,
-                'quantity':quantity,
-                'price_unit':price_unit,
-                'account_id':d_line.product_id.property_account_income_id.id if d_line.product_id.property_account_income_id else d_line.product_id.categ_id.property_account_income_categ_id.id,
-                'uom_id':d_line.product_uom.id,
-                'invoice_line_tax_ids': [(6,0,[t.id for t in invoice.fiscal_position_id.map_tax(taxes)])],
-                }
-                il=invoice.invoice_line_ids.create(i_line_value)
+
+        # create and validate an invoice for the DO
+        journal_ids = journal_obj.search(cr, uid, [
+            ('type', '=', 'sale')
+        ])
+        #Create new invoice, we take the first picking to have the header data
+        picking=delivery_order_ids[0]
+        if picking:
+            invoice = env['account.invoice'].create({
+                'name':picking.name,
+                'date_invoice':time.strftime('%Y-%m-%d'),
+                'partner_id':picking.partner_id.id,
+                'x_journal_id':picking.partner_id.x_journal_id.id,
+                'fiscal_position_id':picking.partner_id.property_account_position_id.id,
+                'account_id':picking.partner_id.property_account_payable_id.id,
+                'payment_term_id':picking.partner_id.property_payment_term_id.id,
+            })
+
+            #Add the lines, positive or negative depending on the move direction
+            for pick in delivery_order_ids:
+                for d_line in pick.move_lines:
+                    if [d_line.location_id.id] == partner_location_ids:
+                        quantity = d_line.product_uom_qty
+                    else:
+                        quantity = -d_line.product_uom_qty
+                    #get invoice line account and fpos
+
+                    #create the invoice line
+                    if picking.partner_id.property_product_pricelist:
+                        price_unit = pool['product.pricelist'].price_get(cr, uid, [picking.partner_id.property_product_pricelist.id],d_line.product_id.id, quantity,context={'uom': d_line.product_uom.id})[picking.partner_id.property_product_pricelist.id]
+                    else:
+                        price_unit = d_line.product_id.list_price
+                    taxes = d_line.product_id.taxes_id or d_line.account_id.tax_ids
+                    i_line_value={
+                    'product_id':d_line.product_id.id,
+                    'name':d_line.product_id.description if d_line.product_id.description else d_line.product_id.name,
+                    'invoice_id':invoice.id,
+                    'quantity':quantity,
+                    'price_unit':price_unit,
+                    'account_id':d_line.product_id.property_account_income_id.id if d_line.product_id.property_account_income_id else d_line.product_id.categ_id.property_account_income_categ_id.id,
+                    'uom_id':d_line.product_uom.id,
+                    'invoice_line_tax_ids': [(6,0,[t.id for t in invoice.fiscal_position_id.map_tax(taxes)])],
+                    }
+                    il=invoice.invoice_line_ids.create(i_line_value)
 
 
 
