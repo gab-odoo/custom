@@ -247,10 +247,14 @@ elif form_data:
             total = 0.0
             for d in all_pickings:
                 for line in d.move_lines:
-                    if line.location_id.id == location_id:
-                        total += line.product_qty * line.product_id.lst_price
+                    if line.location_id.partner_id.property_product_pricelist:
+                        price_unit = pool['product.pricelist'].price_get(cr, uid, [line.location_id.partner_id.property_product_pricelist.id],line.product_id.id, line.product_qty,context={'uom': line.product_id.uom_id.id})[line.location_id.partner_id.property_product_pricelist.id]
                     else:
-                        total -= line.product_qty * line.product_id.lst_price
+                        price_unit = d_line.product_id.list_price
+                    if line.location_id.id == location_id:
+                        total += line.product_qty * price_unit
+                    else:
+                        total -= line.product_qty * price_unit
 
             response = request.website.render("website_b2b.invoice_page", {
                 'do': do,

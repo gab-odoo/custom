@@ -1,5 +1,5 @@
 <odoo>
-	<!-- FORM VIEW -->
+	<!-- FORM VIEW
 	<record model="ir.ui.view" id="gd_migration_example_res_partner">
 		<field name="name">gd_migration_example_res_partner</field>
 		<field name="model">res.partner</field>
@@ -14,5 +14,5 @@
 				<button name="my_test_function" string="Object button" type="object"/>
             </field>
 		</field>
-	</record>
+	</record> -->
 </odoo>

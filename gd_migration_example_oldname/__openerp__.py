@@ -4,15 +4,15 @@
 
 {
     'name': 'Migration example x_date to gn_date',
-    'version': '1.0',
+    'version': '1.2',
     'category': 'Migration',
     'website': 'https://www.odoo.com/',
     'description': """
 This is to demonstrate migration features
 """,
-    'depends': ['base'],
+    'depends': ['base','product'],
     'data': [
-        'views/res_partner.xml',
+
     ],
     'installable': True,
     'auto_install': False,
