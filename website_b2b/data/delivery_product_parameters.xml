@@ -19,6 +19,11 @@
         <field name="value" eval="ref('website_b2b.b2b_stock_picking_out')"/>
     </record>
 
+    <record id="website_b2b.picking_type_return" model="ir.config_parameter">
+        <field name="key">B2B Returns Picking Type ID</field>
+        <field name="value" eval="ref('__export__.stock_picking_type_29')"/>
+    </record>
+
     <record id="website_b2b.stock" model="ir.config_parameter">
         <field name="key">B2B Stock ID</field>
         <field name="value" eval="ref('__export__.stock_warehouse_4')"/>
